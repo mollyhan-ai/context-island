@@ -140,6 +140,8 @@
   /* ---------- 首屏 ---------- */
 
   .hero{margin-bottom:52px}
+  .hero:has(#heroCard:empty){margin-bottom:24px}
+  .hero:has(#heroCard:empty) + #lexTitle{margin-top:24px}
 
   .ask{
     display:flex;
