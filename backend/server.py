@@ -602,7 +602,10 @@ class CardService:
         lexicon_ok, lexicon_detail = self.lexicon.check()
         model_ok = self.config.model_configured
         payload = {
-            "ok": lexicon_ok and model_ok,
+            # Render uses this route as a liveness check.  A missing model key
+            # should keep card generation unavailable, but it must not prevent
+            # the HTTP service and local lexicon from starting.
+            "ok": lexicon_ok,
             "checks": {
                 "lexicon": {"ok": lexicon_ok, "detail": lexicon_detail},
                 "model": {
@@ -611,7 +614,7 @@ class CardService:
                 },
             },
         }
-        return payload, HTTPStatus.OK if payload["ok"] else HTTPStatus.SERVICE_UNAVAILABLE
+        return payload, HTTPStatus.OK if lexicon_ok else HTTPStatus.SERVICE_UNAVAILABLE
 
     def get_word(self, lemma: str) -> tuple[dict[str, object], int]:
         try:

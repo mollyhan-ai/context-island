@@ -298,6 +298,16 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(payload["code"], "MODEL_NOT_CONFIGURED")
         self.assertEqual(payload["attempts"], 0)
 
+    def test_health_stays_live_when_model_is_not_configured(self):
+        service = CardService(self.config(configured=False), lexicon=Lexicon(self.db_path))
+
+        payload, status = dispatch_get(service, "/health")
+
+        self.assertEqual(status, 200)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["checks"]["lexicon"]["ok"])
+        self.assertFalse(payload["checks"]["model"]["ok"])
+
     def test_transport_timeout_is_not_retried(self):
         llm = mock.Mock(
             side_effect=[
