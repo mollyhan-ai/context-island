@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: context-island-api-mollyhan
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: python3 -m compileall -q .
+    startCommand: python3 server.py
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: HOST
+        value: 0.0.0.0
+      - key: LEXICON_DB_PATH
+        value: data/lexicon.db
+      - key: ALLOWED_ORIGINS
+        value: https://mollyhan-ai.github.io
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://dashscope.aliyuncs.com/compatible-mode/v1
+      - key: LLM_MODEL
+        value: qwen3.8-flash
+      - key: LLM_RESPONSE_FORMAT
+        value: json_schema
+      - key: LLM_EXTRA_BODY_JSON
+        value: '{"enable_thinking":false}'
+      - key: LLM_MAX_TOKENS
+        value: 2048
+      - key: LLM_TIMEOUT_SECONDS
+        value: 60
+      - key: LLM_MAX_ATTEMPTS
+        value: 3
+      - key: TRUST_PROXY
+        value: 1
+      - key: GENERATION_RATE_LIMIT_REQUESTS
+        value: 10
+      - key: GENERATION_GLOBAL_LIMIT_REQUESTS
+        value: 60
+      - key: GENERATION_RATE_LIMIT_WINDOW_SECONDS
+        value: 3600

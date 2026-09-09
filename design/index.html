@@ -1444,6 +1444,9 @@
     if(error.code==='MODEL_TIMEOUT'){
       showState('failed','这次生成等待时间较长，请再试一次。','这次没有生成完成','可以保留当前单词，再点一次搜索。');return;
     }
+    if(error.code==='RATE_LIMITED'){
+      showState('failed','当前体验人数较多，请稍后再试。','请求有点多','稍等一会儿，再点击搜索。');return;
+    }
     if(/^(VALIDATION_EXHAUSTED|PARSE_FAILED|SEG_MISMATCH|SENSE_INVALID|TAG_INVALID|TARGET_INVALID)$/.test(error.code)){
       showState('failed','这次没有生成出合格卡片，请再试一次。','这次没有生成成功','输入内容已经保留，可以直接重试。');return;
     }

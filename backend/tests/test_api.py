@@ -186,6 +186,34 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(second["card"], first["card"])
         self.assertEqual(len(llm.calls), 1)
 
+    def test_generation_rate_limit_stops_extra_model_calls(self):
+        llm = MockLLM(GOOD, GOOD)
+        config = self.config()
+        config = Config(
+            **{
+                **config.__dict__,
+                "generation_rate_limit_requests": 1,
+                "generation_rate_limit_window_seconds": 3600,
+            }
+        )
+        service = CardService(config, lexicon=Lexicon(self.db_path), llm=llm)
+
+        first, first_status = service.generate_card(
+            {"word": "eval", "realm": "产品经理", "level": "B2"},
+            client_id="visitor-1",
+        )
+        second, second_status = service.generate_card(
+            {"word": "eval", "realm": "工程师", "level": "B2"},
+            client_id="visitor-1",
+        )
+
+        self.assertEqual(first_status, 200)
+        self.assertTrue(first["ok"])
+        self.assertEqual(second_status, 429)
+        self.assertEqual(second["code"], "RATE_LIMITED")
+        self.assertGreater(second["retry_after_seconds"], 0)
+        self.assertEqual(len(llm.calls), 1)
+
     def test_invalid_sense_retries_with_failure_feedback(self):
         bad = json.loads(GOOD)
         bad["sense_id"] = "eval.n.99"

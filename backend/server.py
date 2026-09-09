@@ -23,6 +23,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections import deque
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -138,6 +139,10 @@ class Config:
         "http://127.0.0.1:8766",
         "http://localhost:8766",
     )
+    generation_rate_limit_requests: int = 0
+    generation_global_limit_requests: int = 0
+    generation_rate_limit_window_seconds: int = 3600
+    trust_proxy: bool = False
 
     @classmethod
     def from_env(cls) -> "Config":
@@ -201,6 +206,14 @@ class Config:
             ).split(",")
             if item.strip()
         )
+
+        def non_negative_int(name: str, default: int) -> int:
+            try:
+                value = int(os.environ.get(name, str(default)))
+            except ValueError:
+                value = default
+            return max(0, value)
+
         return cls(
             llm_api_key=os.environ.get("LLM_API_KEY", "").strip(),
             llm_base_url=os.environ.get("LLM_BASE_URL", "").strip(),
@@ -214,6 +227,17 @@ class Config:
             host=os.environ.get("HOST", "127.0.0.1").strip() or "127.0.0.1",
             port=max(1, min(port, 65535)),
             allowed_origins=origins,
+            generation_rate_limit_requests=non_negative_int(
+                "GENERATION_RATE_LIMIT_REQUESTS", 0
+            ),
+            generation_global_limit_requests=non_negative_int(
+                "GENERATION_GLOBAL_LIMIT_REQUESTS", 0
+            ),
+            generation_rate_limit_window_seconds=max(
+                1, non_negative_int("GENERATION_RATE_LIMIT_WINDOW_SECONDS", 3600)
+            ),
+            trust_proxy=os.environ.get("TRUST_PROXY", "0").strip().lower()
+            in ("1", "true", "yes"),
         )
 
     @property
@@ -501,6 +525,45 @@ def _card_payload(
     }
 
 
+class GenerationLimiter:
+    """限制真实模型生成频率；进程缓存命中不占用额度。"""
+
+    def __init__(self, per_client: int, global_limit: int, window_seconds: int):
+        self.per_client = max(0, per_client)
+        self.global_limit = max(0, global_limit)
+        self.window_seconds = max(1, window_seconds)
+        self._global: deque[float] = deque()
+        self._clients: dict[str, deque[float]] = {}
+        self._lock = threading.Lock()
+
+    def allow(self, client_id: str) -> tuple[bool, int]:
+        if self.per_client == 0 and self.global_limit == 0:
+            return True, 0
+
+        now = time.monotonic()
+        cutoff = now - self.window_seconds
+        key = client_id or "anonymous"
+        with self._lock:
+            while self._global and self._global[0] <= cutoff:
+                self._global.popleft()
+
+            client = self._clients.setdefault(key, deque())
+            while client and client[0] <= cutoff:
+                client.popleft()
+
+            waits: list[float] = []
+            if self.global_limit and len(self._global) >= self.global_limit:
+                waits.append(self._global[0] + self.window_seconds - now)
+            if self.per_client and len(client) >= self.per_client:
+                waits.append(client[0] + self.window_seconds - now)
+            if waits:
+                return False, max(1, int(max(waits) + 0.999))
+
+            self._global.append(now)
+            client.append(now)
+            return True, 0
+
+
 def _target_contains_word(draft: CardDraft, word: str) -> bool:
     """确认模型把精确输入词单独标成目标片段。
 
@@ -529,6 +592,11 @@ class CardService:
         # 服务进程内，避免每次都重新等待远程模型；“再来一句”会绕过缓存。
         self._card_cache: dict[tuple[str, str, str], dict[str, object]] = {}
         self._card_cache_lock = threading.Lock()
+        self._generation_limiter = GenerationLimiter(
+            config.generation_rate_limit_requests,
+            config.generation_global_limit_requests,
+            config.generation_rate_limit_window_seconds,
+        )
 
     def health(self) -> tuple[dict[str, object], int]:
         lexicon_ok, lexicon_detail = self.lexicon.check()
@@ -558,7 +626,9 @@ class CardService:
             }, HTTPStatus.NOT_FOUND
         return {"ok": True, "word": _word_payload(record)}, HTTPStatus.OK
 
-    def generate_card(self, data: object) -> tuple[dict[str, object], int]:
+    def generate_card(
+        self, data: object, client_id: str = "anonymous"
+    ) -> tuple[dict[str, object], int]:
         if not isinstance(data, dict):
             return _bad_request("请求体必须是 JSON 对象")
 
@@ -612,6 +682,16 @@ class CardService:
                     "attempt_log": [],
                     "cached": True,
                 }, HTTPStatus.OK
+
+        allowed, retry_after = self._generation_limiter.allow(client_id)
+        if not allowed:
+            return {
+                "ok": False,
+                "code": "RATE_LIMITED",
+                "detail": "公开体验请求较多，请稍后再试",
+                "retry_after_seconds": retry_after,
+                "attempts": 0,
+            }, HTTPStatus.TOO_MANY_REQUESTS
 
         started = time.monotonic()
         previous_failure: str | None = None
@@ -756,11 +836,11 @@ def dispatch_get(service: CardService, path: str) -> tuple[dict[str, object], in
 
 
 def dispatch_post(
-    service: CardService, path: str, data: object
+    service: CardService, path: str, data: object, client_id: str = "anonymous"
 ) -> tuple[dict[str, object], int]:
     parsed = urllib.parse.urlsplit(path)
     if parsed.path == "/api/card":
-        return service.generate_card(data)
+        return service.generate_card(data, client_id=client_id)
     return {"ok": False, "code": "NOT_FOUND", "detail": "接口不存在"}, HTTPStatus.NOT_FOUND
 
 
@@ -824,7 +904,12 @@ class ApiHandler(BaseHTTPRequestHandler):
         except (UnicodeDecodeError, json.JSONDecodeError):
             self._send(*_bad_request("请求体不是有效 JSON"))
             return
-        payload, status = dispatch_post(self.service, self.path, data)
+        client_id = self.client_address[0]
+        if self.service.config.trust_proxy:
+            forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
+            if forwarded:
+                client_id = forwarded
+        payload, status = dispatch_post(self.service, self.path, data, client_id)
         self._send(payload, status)
 
     def log_message(self, fmt: str, *args: object) -> None:
