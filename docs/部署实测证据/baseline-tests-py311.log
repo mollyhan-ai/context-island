@@ -1,0 +1,58 @@
+test_no_forbidden_imports (test_architecture.TestValidatorPurity.test_no_forbidden_imports) ... ok
+test_validators_dir_is_not_empty (test_architecture.TestValidatorPurity.test_validators_dir_is_not_empty)
+防止上面那条测试因为目录空了而假绿。 ... ok
+test_model_supplied_pos_is_discarded (test_parser.TestConstraintEight.test_model_supplied_pos_is_discarded) ... ok
+test_broken_json (test_parser.TestFailures.test_broken_json) ... ok
+test_empty_input (test_parser.TestFailures.test_empty_input) ... ok
+test_missing_required_field (test_parser.TestFailures.test_missing_required_field) ... ok
+test_no_json_at_all (test_parser.TestFailures.test_no_json_at_all) ... ok
+test_segment_missing_layer1 (test_parser.TestFailures.test_segment_missing_layer1) ... ok
+test_segments_not_a_list (test_parser.TestFailures.test_segments_not_a_list) ... ok
+test_bool_as_int (test_parser.TestTolerance.test_bool_as_int) ... ok
+test_bool_as_string (test_parser.TestTolerance.test_bool_as_string) ... ok
+test_braces_inside_string_do_not_break_extraction (test_parser.TestTolerance.test_braces_inside_string_do_not_break_extraction) ... ok
+test_extra_unknown_fields_ignored (test_parser.TestTolerance.test_extra_unknown_fields_ignored) ... ok
+test_fenced_json (test_parser.TestTolerance.test_fenced_json) ... ok
+test_fenced_without_language (test_parser.TestTolerance.test_fenced_without_language) ... ok
+test_field_order_irrelevant (test_parser.TestTolerance.test_field_order_irrelevant) ... ok
+test_layer2_empty_string_becomes_none (test_parser.TestTolerance.test_layer2_empty_string_becomes_none) ... ok
+test_layer2_null_string_becomes_none (test_parser.TestTolerance.test_layer2_null_string_becomes_none) ... ok
+test_leading_and_trailing_prose (test_parser.TestTolerance.test_leading_and_trailing_prose) ... ok
+test_plain_json (test_parser.TestTolerance.test_plain_json) ... ok
+test_depth_two_is_caught (test_validators.TestDepth.test_depth_two_is_caught) ... ok
+test_depth_zero_and_one_pass (test_validators.TestDepth.test_depth_zero_and_one_pass) ... ok
+test_good_draft_passes_all (test_validators.TestHappyPath.test_good_draft_passes_all) ... ok
+test_rewrite_reported_before_tag_error (test_validators.TestPipelineOrder.test_rewrite_reported_before_tag_error)
+句子被改写时，应先报 SEG_MISMATCH，而不是标签问题。 ... ok
+test_sentence_unchanged_by_validation (test_validators.TestPipelineOrder.test_sentence_unchanged_by_validation)
+校验必须无副作用。 ... ok
+test_case_change_is_caught (test_validators.TestSegmentsMatch.test_case_change_is_caught)
+大小写变化必须拦下来——它是对原句的改动。 ... ok
+test_curly_apostrophe_is_tolerated (test_validators.TestSegmentsMatch.test_curly_apostrophe_is_tolerated)
+模型常把 feature's 写成 feature’s，视为等价。 ... ok
+test_dropped_punctuation_is_caught (test_validators.TestSegmentsMatch.test_dropped_punctuation_is_caught) ... ok
+test_empty_segments_is_caught (test_validators.TestSegmentsMatch.test_empty_segments_is_caught) ... ok
+test_extra_whitespace_is_tolerated (test_validators.TestSegmentsMatch.test_extra_whitespace_is_tolerated)
+空白差异不算改写。 ... ok
+test_missing_word_is_caught (test_validators.TestSegmentsMatch.test_missing_word_is_caught) ... ok
+test_punctuation_attached_is_tolerated (test_validators.TestSegmentsMatch.test_punctuation_attached_is_tolerated)
+句号附着在最后一个词上，也应通过。 ... ok
+test_reordered_segments_is_caught (test_validators.TestSegmentsMatch.test_reordered_segments_is_caught)
+打乱顺序会改变字符序列，必须拦下。 ... ok
+test_rewritten_word_is_caught (test_validators.TestSegmentsMatch.test_rewritten_word_is_caught) ... ok
+test_all_valid_ids_pass (test_validators.TestSense.test_all_valid_ids_pass) ... ok
+test_empty_sense_id_is_caught (test_validators.TestSense.test_empty_sense_id_is_caught) ... ok
+test_fabricated_sense_id_is_caught (test_validators.TestSense.test_fabricated_sense_id_is_caught) ... ok
+test_other_word_sense_id_is_caught (test_validators.TestSense.test_other_word_sense_id_is_caught) ... ok
+test_empty_layer2_is_allowed (test_validators.TestTags.test_empty_layer2_is_allowed) ... ok
+test_invented_layer1_is_caught (test_validators.TestTags.test_invented_layer1_is_caught) ... ok
+test_layer1_value_used_in_layer2_is_caught (test_validators.TestTags.test_layer1_value_used_in_layer2_is_caught) ... ok
+test_lowercase_tag_is_caught (test_validators.TestTags.test_lowercase_tag_is_caught)
+标签大小写敏感，attr 不等于 Attr。 ... ok
+test_no_target_is_caught (test_validators.TestTarget.test_no_target_is_caught) ... ok
+test_two_targets_is_caught (test_validators.TestTarget.test_two_targets_is_caught) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.002s
+
+OK

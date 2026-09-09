@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>语境岛 — 在你的领域里学一个词</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316241F'/%3E%3Cpath d='M7 21h18' stroke='%23EDEFE9' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M11 21c0-4 2-7 5-7s5 3 5 7' fill='none' stroke='%232E6F8E' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="查一个英文单词，在你自己的领域里看它怎么用，以及整句是怎么搭起来的。">
+<style>
+  :root{
+    --paper:#EDEFE9;
+    --surface:#FBFCFA;
+    --ink:#16241F;
+    --muted:#63736C;
+    --line:#D6DBD3;
+
+    --s:#2E6F8E;    /* 主语 */
+    --v:#9C4221;    /* 谓语 */
+    --o:#3F7150;    /* 宾语 */
+    --a:#6D5E9C;    /* 状语 */
+    --attr:#96701C; /* 定语 */
+    --p:#1F6B72;    /* 表语 */
+    --c:#7A4A6B;    /* 补语 */
+  }
+
+  *{box-sizing:border-box}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.7;
+  }
+
+  .wrap{max-width:660px;margin:0 auto;padding:40px 20px 80px}
+
+  header{margin-bottom:26px}
+
+  .mark{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:15.5px;
+    font-weight:600;
+    letter-spacing:.02em;
+    color:var(--ink);
+    margin:0;
+  }
+
+  .logo{width:19px;height:19px;flex:0 0 auto;color:var(--ink)}
+
+  h1{
+    font-size:27px;
+    font-weight:600;
+    letter-spacing:-.01em;
+    margin:0 0 14px;
+    line-height:1.35;
+  }
+
+  .lede{margin:0;color:var(--muted);font-size:15px;max-width:52ch}
+
+  h2{
+    font-size:18px;
+    font-weight:600;
+    margin:56px 0 6px;
+    padding-top:26px;
+    border-top:1px solid var(--line);
+  }
+
+  h2:first-of-type{border-top:none;padding-top:0}
+
+  .sub{margin:0 0 24px;color:var(--muted);font-size:14px;max-width:52ch}
+
+
+  /* ---------- 顶栏与领域切换 ---------- */
+
+  .bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .realm{position:relative}
+
+  .realm-btn{
+    background:none;
+    border:1px solid var(--line);
+    border-radius:15px;
+    padding:5px 12px;
+    margin:0;
+    font:inherit;
+    font-size:14px;
+    color:var(--ink);
+    cursor:pointer;
+    line-height:1.5;
+    white-space:nowrap;
+  }
+
+  .realm-btn:hover{border-color:var(--s)}
+  .realm-btn:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+
+  .caret{color:var(--muted);margin-left:5px;font-size:17px}
+
+  .realm-menu{
+    position:absolute;
+    top:calc(100% + 6px);
+    right:0;
+    z-index:20;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:5px;
+    min-width:132px;
+    box-shadow:0 3px 14px rgba(22,36,31,.09);
+  }
+
+  .realm-menu button{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    border-radius:2px;
+    padding:7px 11px;
+    margin:0;
+    font:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+
+  .realm-menu button:hover{background:var(--paper)}
+  .realm-menu button.on{color:var(--v);font-weight:600}
+
+  /* ---------- 首屏 ---------- */
+
+  .hero{margin-bottom:52px}
+
+  .ask{
+    display:flex;
+    gap:8px;
+    margin:0 0 18px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .ask input{
+    flex:1 1 180px;
+    min-width:0;
+    font:inherit;
+    font-size:15px;
+    padding:9px 13px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--surface);
+    color:var(--ink);
+  }
+
+  .ask input:focus{outline:2px solid var(--s);outline-offset:-1px;border-color:var(--s)}
+
+  .ask button{
+    font:inherit;
+    font-size:14.5px;
+    padding:9px 20px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    border-radius:3px;
+    cursor:pointer;
+  }
+
+  .ask-note{
+    font-size:13.5px;
+    color:var(--muted);
+    margin:-8px 0 16px;
+  }
+  .ask-note:empty{margin:0}
+
+  .again{
+    display:block;
+    width:100%;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:11px;
+    margin:12px 0 0;
+    font:inherit;
+    font-size:15px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+
+  .again:hover{border-color:var(--s);color:var(--s)}
+  .again:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+  .again[hidden]{display:none}
+
+
+  /* ---------- 领域常见词 ---------- */
+
+  .lex{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-bottom:8px;
+  }
+
+  .lex button{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:6px 12px;
+    margin:0;
+    font-family:Georgia,"Iowan Old Style",serif;
+    font-size:15.5px;
+    color:var(--ink);
+    cursor:pointer;
+    line-height:1.5;
+  }
+
+  .lex button:hover{border-color:var(--s);color:var(--s)}
+  .lex button:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+  .lex button.seen{color:var(--muted);border-style:dashed}
+
+
+  /* ---------- 内容变化的反馈 ---------- */
+
+  @keyframes settle{
+    from{opacity:0;transform:translateY(4px)}
+    to{opacity:1;transform:none}
+  }
+
+  .swap{animation:settle .22s ease-out}
+
+  @media (prefers-reduced-motion:reduce){
+    .swap{animation:none}
+  }
+
+  .empty{
+    background:var(--surface);
+    border:1px dashed var(--line);
+    border-radius:3px;
+    padding:34px 20px;
+    text-align:center;
+    color:var(--muted);
+    font-size:15px;
+  }
+
+  .empty span{display:block;font-size:13.5px;margin-top:6px}
+
+  /* ---------- 卡片 ---------- */
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:22px 20px 20px;
+    margin-bottom:18px;
+  }
+
+  .meta{
+    display:flex;
+    gap:14px;
+    align-items:baseline;
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+
+  .word{
+    font-family:Georgia,"Iowan Old Style",serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--ink);
+    letter-spacing:-.01em;
+  }
+
+  .sentence{
+    font-family:Georgia,"Iowan Old Style","Times New Roman",serif;
+    font-size:20px;
+    line-height:1.6;
+    margin:0 0 8px;
+  }
+
+  /* ---------- 发音 ---------- */
+
+  .phon{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin:-8px 0 16px;
+  }
+
+  .ipa{
+    font-family:Georgia,"Iowan Old Style",serif;
+    font-size:14.5px;
+    color:var(--muted);
+  }
+
+  .say{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    background:none;
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:2px 7px;
+    margin:0;
+    font:inherit;
+    font-size:12px;
+    color:var(--muted);
+    cursor:pointer;
+    line-height:1.6;
+  }
+
+  .say:hover{border-color:var(--s);color:var(--s)}
+  .say:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+  .say.on{border-color:var(--v);color:var(--v)}
+
+  .say svg{width:11px;height:11px;flex:0 0 auto}
+
+  .say-line{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin:0 0 18px;
+  }
+
+  .sentence em{
+    font-style:normal;
+    border-bottom:2.5px solid var(--v);
+    padding-bottom:1px;
+  }
+
+  .zh{margin:0 0 20px;color:var(--muted);font-size:14.5px}
+  .word-meaning{margin:16px 0 18px;padding:14px 16px;border-radius:12px;background:#f3f5f1;color:var(--ink)}
+  .word-meaning .meaning-label{display:block;margin-bottom:6px;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.04em}
+  .word-meaning p{margin:0;white-space:pre-line;line-height:1.7}
+
+  /* ---------- 成分树:缩进列表 ---------- */
+
+  .tree{margin:0;padding:0;list-style:none;border-left:1px solid var(--line);}
+
+  .tree li{
+    padding:5px 0 5px 14px;
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    flex-wrap:wrap;
+  }
+
+  .tree li.nest{padding-left:34px;position:relative}
+
+  .tree li.nest::before{
+    content:"";
+    position:absolute;
+    left:14px;top:16px;
+    width:12px;height:1px;
+    background:var(--line);
+  }
+
+  .tag{
+    font-size:12px;
+    font-weight:600;
+    padding:1.5px 7px;
+    border-radius:2px;
+    color:#fff;
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+
+  .frag{
+    font-family:Georgia,"Iowan Old Style",serif;
+    font-size:16.5px;
+  }
+
+  .frag.hit{text-decoration-line:underline;text-decoration-color:var(--v);text-decoration-thickness:2.5px;text-underline-offset:5px;text-decoration-skip-ink:none;padding-bottom:1px}
+
+  .pos{font-size:12px;color:var(--muted);font-family:Georgia,serif;font-style:italic}
+
+  .t-s{background:var(--s)}
+  .t-v{background:var(--v)}
+  .t-o{background:var(--o)}
+  .t-a{background:var(--a)}
+  .t-attr{background:var(--attr)}
+  .t-p{background:var(--p)}
+  .t-c{background:var(--c)}
+
+  /* ---------- 义项 ---------- */
+
+  .senses{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+
+  .sense{
+    display:flex;
+    gap:10px;
+    font-size:14.5px;
+    padding:4px 0;
+    color:var(--muted);
+    align-items:baseline;
+  }
+
+  .sense.on{color:var(--ink);font-weight:500}
+
+  .sense .n{
+    font-family:Georgia,serif;
+    font-size:12.5px;
+    color:var(--muted);
+    flex:0 0 auto;
+    width:18px;
+  }
+
+  .sense.on .n{color:var(--v)}
+
+  .toggle{
+    background:none;
+    border:none;
+    padding:6px 0 0;
+    margin:0;
+    font:inherit;
+    font-size:13.5px;
+    color:var(--s);
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+
+  .hidden{display:none}
+
+  /* ---------- 三种画法对比 ---------- */
+
+  .variant{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:20px;
+    margin-bottom:16px;
+  }
+
+  .vname{font-size:14px;font-weight:600;margin:0 0 16px;color:var(--muted)}
+
+  /* 画法 A:色块横排 */
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+
+  .chip{
+    border-radius:2px;
+    padding:4px 9px 6px;
+    color:#fff;
+  }
+
+  .chip .lb{display:block;font-size:11px;opacity:.85;line-height:1.4}
+  .chip .tx{font-family:Georgia,serif;font-size:16px;line-height:1.4}
+
+  .c-s{background:var(--s)}
+  .c-v{background:var(--v)}
+  .c-o{background:var(--o)}
+  .c-a{background:var(--a)}
+
+  /* 画法 C:括号 */
+  .brackets{font-family:Georgia,"Iowan Old Style",serif;font-size:17px;line-height:2.1}
+
+  .br{white-space:nowrap}
+  .br .k{font-size:11.5px;font-weight:700;vertical-align:.28em;margin-right:2px;font-family:"PingFang SC",sans-serif}
+  .br .b{color:var(--muted);font-weight:400}
+
+  .k-s{color:var(--s)} .k-v{color:var(--v)} .k-o{color:var(--o)} .k-a{color:var(--a)}
+
+  /* ---------- 观察指南 ---------- */
+
+  .guide{
+    margin-top:64px;
+    background:#E4E8E0;
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:24px 20px;
+  }
+
+  .guide summary{
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink);
+    margin-bottom:14px;
+  }
+  .guide summary:focus-visible{outline:2px solid var(--s);outline-offset:3px}
+  .guide h3{font-size:16px;margin:0 0 4px}
+  .guide p, .guide li{font-size:14.5px}
+  .guide p{color:var(--muted);margin:0 0 16px}
+  .guide ol,.guide ul{margin:0 0 18px;padding-left:20px}
+  .guide li{margin-bottom:7px}
+  .guide strong{color:var(--ink)}
+  .guide .q{
+    background:var(--surface);
+    border-left:2px solid var(--s);
+    padding:10px 14px;
+    margin:0 0 10px;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+
+  footer{margin-top:44px;font-size:13px;color:var(--muted);line-height:1.8}
+
+  @media (max-width:420px){
+    .wrap{padding:28px 15px 60px}
+    h1{font-size:23px}
+    .sentence{font-size:18px}
+    .frag{font-size:15.5px}
+    .tree li{gap:8px}
+    .tree li.nest{padding-left:28px}
+    .tree li.nest::before{left:14px;width:8px}
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .toggle:focus-visible{outline:2px solid var(--s);outline-offset:3px}
+  }
+
+  [hidden]{display:none !important}
+  button:focus-visible, summary:focus-visible{outline:2px solid var(--s);outline-offset:3px}
+  button{touch-action:manipulation}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .voice-setting{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 18px;font-size:14px;color:var(--muted)}
+  .voice-setting select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:3px;min-height:44px;padding:6px 10px;max-width:100%;min-width:0}
+  .voice-setting select:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+  .ask input{font-size:16px}
+  .realm-btn,.realm-menu button,.lex button,.toggle,.say{min-height:44px}
+  .say{font-size:14px;padding:5px 10px}
+  .say-line{flex-wrap:wrap}
+  .audio-status{font-size:14px;color:var(--muted)}
+  .tree li{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:baseline;column-gap:10px;row-gap:2px}
+  .tree .tag{grid-column:1;grid-row:1}
+  .tree .frag{grid-column:2;grid-row:1;min-width:0;overflow-wrap:anywhere}
+  .tree .pos{grid-column:2;font-size:14px;white-space:normal}
+  .tag{font-size:14px}
+  .sentence,.sense,.q{overflow-wrap:anywhere}
+  .br{white-space:normal}
+  .sense{align-items:flex-start}
+  .sense>span:last-child{min-width:0}
+  .empty .toggle{display:inline-block;margin-top:12px}
+  @media (max-width:420px){.card{padding:18px 14px}.tree li{column-gap:8px}.tree li.nest{padding-left:24px}}
+
+  .phon{gap:10px 18px;align-items:center}
+  .word-pron{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:4px 0;border:0;background:none;font:inherit;cursor:pointer;border-radius:3px}
+  .word-pron .ipa{font-size:18px;color:inherit}
+  .word-pron svg{width:20px;height:20px;flex-shrink:0}
+  .accent-label{font-size:13px;font-family:system-ui,sans-serif}
+  .accent-uk{color:#2766ad}
+  .accent-us{color:#c33b5f}
+  .word-pron:hover .ipa{text-decoration:underline;text-underline-offset:4px}
+  .phon .audio-status{flex-basis:100%;font-size:14px}
+  .phon .audio-status:empty{display:none}
+
+  .sentence .say{width:32px;height:32px;min-height:32px;padding:0;margin-left:4px;border:0;vertical-align:-5px;line-height:1;border-radius:50%}
+  .sentence .say svg{width:22px;height:22px}
+  .sentence .say:hover,.sentence .say.on{background:var(--paper)}
+  .sentence .audio-status{display:block;font:14px/1.5 system-ui,sans-serif;margin-top:6px}
+  .sentence .audio-status:empty{display:none}
+  .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important}
+  @media (pointer:coarse){.sentence .say{width:44px;height:44px;min-height:44px;vertical-align:-10px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header>
+  <div class="bar">
+    <p class="mark"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M7 21h18" stroke="#EDEFE9" stroke-width="2" stroke-linecap="round"/><path d="M11 21c0-4 2-7 5-7s5 3 5 7" fill="none" stroke="#7FB2C9" stroke-width="2.2" stroke-linecap="round"/></svg>语境岛</p>
+    <div class="realm">
+      <button class="realm-btn" id="realmBtn" aria-haspopup="menu" aria-controls="realmMenu" aria-expanded="false">
+        产品经理<span class="caret">▾</span>
+      </button>
+      <div class="realm-menu" id="realmMenu" role="menu" aria-label="选择兴趣领域" hidden></div>
+    </div>
+  </div>
+</header>
+
+<section class="hero" aria-label="单词样卡">
+  <form class="ask" id="askForm">
+    <input id="askWord" type="text" placeholder="输入单词，看懂它在句子里怎么用" aria-label="输入单词，看懂它在句子里怎么用" aria-describedby="askNote" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64">
+    <button id="askGo" type="submit">搜索</button>
+  </form>
+  <p class="ask-note" id="askNote" role="status" aria-live="polite" aria-atomic="true"></p>
+  <div id="heroCard"></div>
+  <button class="again" id="again" type="button" aria-describedby="askNote">再来一句</button>
+</section>
+
+<h2 id="lexTitle">产品经理常见的词</h2>
+<p class="sub" id="lexSub">点一个继续看。换右上角的领域，这里也会跟着换。</p>
+<div class="lex" id="lex"></div>
+<p class="ask-note" id="lexNote" role="status" aria-live="polite"></p>
+
+<h2>换个词看看</h2>
+<p class="sub">八个词，八个领域。</p>
+
+<!-- ============ 卡片 1 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">resolve</span><span>AI 产品经理</span><span>B2</span></div>
+  <div class="phon"><span class="ipa">英 /rɪˈzɒlv/</span><span class="ipa">美 /rɪˈzɑːlv/</span></div>
+  <p class="sentence">The team <em>resolved</em> the conflict before the release. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="The team resolved the conflict before the release."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">团队在发版前解决了这个冲突。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">The team</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag hit">resolved</span><span class="pos">v.</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">the conflict</span><span class="pos">n.</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">before the release</span><span class="pos">介词短语</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>解决（争端、分歧、问题）</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>下定决心去做某事</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>（影像、光学）分辨出细节</span></div>
+    <div class="sense hidden" data-more><span class="n">4</span><span>（会议）正式表决通过</span></div>
+    <button class="toggle">还有 3 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 2 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">brew</span><span>咖啡</span><span>A2</span></div>
+  <div class="phon"><span class="ipa">英 /bruː/</span><span class="ipa">美 /bruː/</span></div>
+  <p class="sentence">She <em>brews</em> coffee every morning before work. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="She brews coffee every morning before work."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">她每天早上上班前都煮咖啡。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">She</span><span class="pos">pron.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag hit">brews</span><span class="pos">v.</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">coffee</span><span class="pos">n.</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">every morning</span><span class="pos">n. 短语</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">before work</span><span class="pos">介词短语</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>冲泡、煮（咖啡或茶）</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>酿造（啤酒）</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>（麻烦、风暴）正在酝酿</span></div>
+    <button class="toggle">还有 2 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 3 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">territorial</span><span>猫的行为</span><span>B1</span></div>
+  <div class="phon"><span class="ipa">英 /ˌterəˈtɔːriəl/</span><span class="ipa">美 /ˌterəˈtɔːriəl/</span></div>
+  <p class="sentence">Cats are <em>territorial</em> animals that mark their space with scent. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="Cats are territorial animals that mark their space with scent."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">猫是护领地的动物，会用气味标记自己的地盘。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">Cats</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag">are</span><span class="pos">v.</span></li>
+    <li><span class="tag t-attr">定语</span><span class="frag hit">territorial</span><span class="pos">adj.</span></li>
+    <li><span class="tag t-p">表语</span><span class="frag">animals</span><span class="pos">n.</span></li>
+    <li><span class="tag t-attr">定语</span><span class="frag">that mark their space with scent</span><span class="pos">定语从句</span></li>
+    <li class="nest"><span class="tag t-a">状语</span><span class="frag">with scent</span><span class="pos">从句内</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>护卫领地的、有地盘意识的</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>领土的、地域的</span></div>
+    <button class="toggle">还有 1 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 4 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">abandon</span><span>科幻</span><span>B1</span></div>
+  <div class="phon"><span class="ipa">英 /əˈbændən/</span><span class="ipa">美 /əˈbændən/</span></div>
+  <p class="sentence">The crew <em>abandoned</em> the ship when the reactor failed. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="The crew abandoned the ship when the reactor failed."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">反应堆失效时，全体船员弃船了。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">The crew</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag hit">abandoned</span><span class="pos">v.</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">the ship</span><span class="pos">n.</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">when the reactor failed</span><span class="pos">时间状语从句</span></li>
+    <li class="nest"><span class="tag t-s">主语</span><span class="frag">the reactor</span><span class="pos">从句内</span></li>
+    <li class="nest"><span class="tag t-v">谓语</span><span class="frag">failed</span><span class="pos">从句内</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>放弃、舍弃（不得不离开）</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>遗弃（某人）</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>放纵、听任（情绪支配自己）</span></div>
+    <button class="toggle">还有 2 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 5 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">mature</span><span>威士忌</span><span>B2</span></div>
+  <div class="phon"><span class="ipa">英 /məˈtʃʊə(r)/</span><span class="ipa">美 /məˈtʃʊr/</span></div>
+  <p class="sentence">The whisky <em>matured</em> in oak barrels for twelve years. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="The whisky matured in oak barrels for twelve years."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">这款威士忌在橡木桶里陈放了十二年。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">The whisky</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag hit">matured</span><span class="pos">v.</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">in oak barrels</span><span class="pos">介词短语</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">for twelve years</span><span class="pos">介词短语</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>（酒、奶酪）陈化成熟</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>（人）长大、变成熟</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>（票据、保单）到期</span></div>
+    <button class="toggle">还有 2 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 6 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">iterate</span><span>AI 产品经理</span><span>B1</span></div>
+  <div class="phon"><span class="ipa">英 /ˈɪtəreɪt/</span><span class="ipa">美 /ˈɪtəreɪt/</span></div>
+  <p class="sentence">We decided to <em>iterate</em> on the prototype after the user interviews. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="We decided to iterate on the prototype after the user interviews."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">用户访谈之后，我们决定在原型上继续迭代。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">We</span><span class="pos">pron.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag">decided</span><span class="pos">v.</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">to iterate on the prototype</span><span class="pos">不定式短语</span></li>
+    <li class="nest"><span class="tag t-v">谓语</span><span class="frag hit">iterate</span><span class="pos">短语内</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">after the user interviews</span><span class="pos">介词短语</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>反复改进、迭代</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>重复说、重申</span></div>
+    <button class="toggle">还有 1 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 7 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">plateau</span><span>健身</span><span>B2</span></div>
+  <div class="phon"><span class="ipa">英 /ˈplætəʊ/</span><span class="ipa">美 /plæˈtoʊ/</span></div>
+  <p class="sentence">Most beginners <em>plateau</em> after three months of steady training. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="Most beginners plateau after three months of steady training."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">大多数新手在稳定训练三个月后会进入平台期。</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">Most beginners</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag hit">plateau</span><span class="pos">v.</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">after three months of steady training</span><span class="pos">介词短语</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>进入停滞期、不再进步</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>高原、台地</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>（进展的）平台期</span></div>
+    <button class="toggle">还有 2 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 卡片 8 ============ -->
+<div class="card">
+  <div class="meta"><span class="word">bias</span><span>心理学</span><span>B1</span></div>
+  <div class="phon"><span class="ipa">英 /ˈbaɪəs/</span><span class="ipa">美 /ˈbaɪəs/</span></div>
+  <p class="sentence">Confirmation <em>bias</em> makes people notice only supporting evidence. <button type="button" aria-label="朗读整句" title="朗读整句" class="say sread" data-sentence="Confirmation bias makes people notice only supporting evidence."><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></button></p>
+  <p class="zh">确认偏误让人只注意到支持自己观点的证据。</p>
+  <ul class="tree">
+    <li><span class="tag t-attr">定语</span><span class="frag">Confirmation</span><span class="pos">n.</span></li>
+    <li><span class="tag t-s">主语</span><span class="frag hit">bias</span><span class="pos">n.</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag">makes</span><span class="pos">v.</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">people</span><span class="pos">n.</span></li>
+    <li><span class="tag t-c">补语</span><span class="frag">notice only supporting evidence</span><span class="pos">不带 to 的不定式</span></li>
+  </ul>
+  <div class="senses">
+    <div class="sense on"><span class="n">1</span><span>偏见、思维上的偏向</span></div>
+    <div class="sense hidden" data-more><span class="n">2</span><span>（统计）偏差</span></div>
+    <div class="sense hidden" data-more><span class="n">3</span><span>（布料的）斜纹</span></div>
+    <button class="toggle">还有 2 个义项</button>
+  </div>
+</div>
+
+<!-- ============ 对比区 ============ -->
+<h2>同一个句子，三种画法</h2>
+<p class="sub">以下保留早期画法参考，展开层级不同，不作为等量对比实验；当前卡片采用已确定的缩进列表。</p>
+
+<div class="variant">
+  <p class="vname">画法一　色块横排</p>
+  <div class="chips">
+    <span class="chip c-s"><span class="lb">主语</span><span class="tx">The crew</span></span>
+    <span class="chip c-v"><span class="lb">谓语</span><span class="tx">abandoned</span></span>
+    <span class="chip c-o"><span class="lb">宾语</span><span class="tx">the ship</span></span>
+    <span class="chip c-a"><span class="lb">状语</span><span class="tx">when the reactor failed</span></span>
+  </div>
+</div>
+
+<div class="variant">
+  <p class="vname">画法二　缩进列表（上面 8 张卡用的就是这种）</p>
+  <ul class="tree">
+    <li><span class="tag t-s">主语</span><span class="frag">The crew</span></li>
+    <li><span class="tag t-v">谓语</span><span class="frag">abandoned</span></li>
+    <li><span class="tag t-o">宾语</span><span class="frag">the ship</span></li>
+    <li><span class="tag t-a">状语</span><span class="frag">when the reactor failed</span></li>
+    <li class="nest"><span class="tag t-s">主语</span><span class="frag">the reactor</span></li>
+    <li class="nest"><span class="tag t-v">谓语</span><span class="frag">failed</span></li>
+  </ul>
+</div>
+
+<div class="variant">
+  <p class="vname">画法三　括号嵌套</p>
+  <p class="brackets">
+    <span class="br"><span class="b">[</span><span class="k k-s">主</span>The crew<span class="b">]</span></span>
+    <span class="br"><span class="b">[</span><span class="k k-v">谓</span>abandoned<span class="b">]</span></span>
+    <span class="br"><span class="b">[</span><span class="k k-o">宾</span>the ship<span class="b">]</span></span>
+    <span class="br"><span class="b">[</span><span class="k k-a">状</span>when the reactor failed<span class="b">]</span></span>
+  </p>
+</div>
+
+<!-- ============ 给 Molly 的观察指南 ============ -->
+<details class="guide"><summary>朗读设置</summary><div class="voice-setting"><label for="voiceChoice">整句朗读声音</label><select id="voiceChoice"><option>正在读取英语声音…</option></select></div><p>只记录本页已开始的整句朗读，刷新后归零，不上传。</p><div class="q" id="tally">整句朗读开始 0 次（仅本页，刷新归零）</div><div class="q" id="diag">正在读取英语语音…</div></details>
+
+<footer>
+  搜索结果由本地词库与生成服务提供；服务未连接时，仅 exposure 可显示本地预置示例。<br>
+  动态卡片展示 WordNet 英文义项和独立的整词中文参考。<br>
+  预置样例的单词录音与音标来源：<a href="https://www.oxfordlearnersdictionaries.com/" target="_blank" rel="noopener noreferrer">Oxford Learner’s Dictionaries</a> · <a href="录音来源.md">各词来源</a>。首张 exposure 样卡试用 Ava 自然美音，其余整句使用浏览器语音合成。
+</footer>
+
+</main>
+
+<script>
+  /* ---- 首屏：一个词 + 当前领域 ---- */
+
+  var SENSES = [
+    '曝光、被看到的程度',
+    '（心理治疗）逐步接触、暴露',
+    '接触（病原体、有害物质）',
+    '（金融）风险敞口',
+    '（法律）需承担责任的风险',
+    '暴露于自然环境中、经受',
+    '（摄影）曝光'
+  ];
+
+  /* 每个领域下备两句，用于「再来一句」 */
+  var REALMS = [
+    {
+      key:'产品经理', hit:0,
+      cards:[
+        {
+          en:'The new placement doubled the feature\'s <em>exposure</em> within a week.',
+          plain:'The new placement doubled the feature\'s exposure within a week.',
+          zh:'新的位置让这个功能的曝光量在一周内翻了一倍。',
+          tree:[
+            ['s','主语','The new placement','n.',0],
+            ['v','谓语','doubled','v.',0],
+            ['attr','定语',"the feature's",'n. 所有格',0],
+            ['o','宾语','exposure','n.',1],
+            ['a','状语','within a week','介词短语',0]
+          ]
+        },
+        {
+          en:'We cut the banner because it gave low-value features too much <em>exposure</em>.',
+          plain:'We cut the banner because it gave low-value features too much exposure.',
+          zh:'我们砍掉了这个横幅，因为它给低价值功能过多的曝光。',
+          tree:[
+            ['s','主语','We','pron.',0],
+            ['v','谓语','cut','v.',0],
+            ['o','宾语','the banner','n.',0],
+            ['a','状语','because it gave low-value features too much exposure','原因状语从句',0],
+            ['s','主语','it','pron.',0,1],
+            ['v','谓语','gave','v.',0,1],
+            ['o','宾语','too much exposure','n. 短语',1,1]
+          ]
+        }
+      ]
+    },
+    {
+      key:'心理学', hit:1,
+      cards:[
+        {
+          en:'Gradual <em>exposure</em> helps patients reduce their fear of open spaces.',
+          plain:'Gradual exposure helps patients reduce their fear of open spaces.',
+          zh:'循序渐进的暴露训练能帮患者减轻对开阔空间的恐惧。',
+          tree:[
+            ['attr','定语','Gradual','adj.',0],
+            ['s','主语','exposure','n.',1],
+            ['v','谓语','helps','v.',0],
+            ['o','宾语','patients','n.',0],
+            ['c','补语','reduce their fear of open spaces','不带 to 的不定式',0]
+          ]
+        },
+        {
+          en:'The therapist increased <em>exposure</em> once the patient felt safe.',
+          plain:'The therapist increased exposure once the patient felt safe.',
+          zh:'等患者感到安全后，治疗师加大了暴露的强度。',
+          tree:[
+            ['s','主语','The therapist','n.',0],
+            ['v','谓语','increased','v.',0],
+            ['o','宾语','exposure','n.',1],
+            ['a','状语','once the patient felt safe','时间状语从句',0],
+            ['s','主语','the patient','n.',0,1],
+            ['v','谓语','felt','v.',0,1],
+            ['p','表语','safe','adj.',0,1]
+          ]
+        }
+      ]
+    },
+    {
+      key:'医学', hit:2,
+      cards:[
+        {
+          en:'<em>Exposure</em> to the virus can cause symptoms within a few days.',
+          plain:'Exposure to the virus can cause symptoms within a few days.',
+          zh:'接触这种病毒后，几天内就可能出现症状。',
+          tree:[
+            ['s','主语','Exposure','n.',1],
+            ['attr','定语','to the virus','介词短语',0],
+            ['v','谓语','can cause','v.',0],
+            ['o','宾语','symptoms','n.',0],
+            ['a','状语','within a few days','介词短语',0]
+          ]
+        },
+        {
+          en:'Nurses wear masks to limit <em>exposure</em> during long shifts.',
+          plain:'Nurses wear masks to limit exposure during long shifts.',
+          zh:'护士戴口罩，以减少长班期间的接触暴露。',
+          tree:[
+            ['s','主语','Nurses','n.',0],
+            ['v','谓语','wear','v.',0],
+            ['o','宾语','masks','n.',0],
+            ['a','状语','to limit exposure','不定式短语',0],
+            ['o','宾语','exposure','n.',1,1],
+            ['a','状语','during long shifts','介词短语',0]
+          ]
+        }
+      ]
+    },
+    {
+      key:'金融', hit:3,
+      cards:[
+        {
+          en:'The fund reduced its <em>exposure</em> to emerging markets last quarter.',
+          plain:'The fund reduced its exposure to emerging markets last quarter.',
+          zh:'该基金上季度降低了对新兴市场的风险敞口。',
+          tree:[
+            ['s','主语','The fund','n.',0],
+            ['v','谓语','reduced','v.',0],
+            ['attr','定语','its','限定词',0],
+            ['o','宾语','exposure','n.',1],
+            ['attr','定语','to emerging markets','介词短语',0],
+            ['a','状语','last quarter','n. 短语',0]
+          ]
+        },
+        {
+          en:'Analysts warned that <em>exposure</em> to a single sector raises risk.',
+          plain:'Analysts warned that exposure to a single sector raises risk.',
+          zh:'分析师警告说，集中于单一板块的敞口会抬高风险。',
+          tree:[
+            ['s','主语','Analysts','n.',0],
+            ['v','谓语','warned','v.',0],
+            ['o','宾语','that exposure to a single sector raises risk','宾语从句',0],
+            ['s','主语','exposure','n.',1,1],
+            ['v','谓语','raises','v.',0,1],
+            ['o','宾语','risk','n.',0,1]
+          ]
+        }
+      ]
+    },
+    {
+      key:'法律', hit:4,
+      cards:[
+        {
+          en:'The clause limits the company\'s <em>exposure</em> to third-party claims.',
+          plain:'The clause limits the company\'s exposure to third-party claims.',
+          zh:'该条款限制了公司对第三方索赔需承担的风险。',
+          tree:[
+            ['s','主语','The clause','n.',0],
+            ['v','谓语','limits','v.',0],
+            ['attr','定语',"the company's",'n. 所有格',0],
+            ['o','宾语','exposure','n.',1],
+            ['attr','定语','to third-party claims','介词短语',0]
+          ]
+        },
+        {
+          en:'Counsel advised the board to disclose its <em>exposure</em> before signing.',
+          plain:'Counsel advised the board to disclose its exposure before signing.',
+          zh:'律师建议董事会在签字前披露其承担的风险。',
+          tree:[
+            ['s','主语','Counsel','n.',0],
+            ['v','谓语','advised','v.',0],
+            ['o','宾语','the board','n.',0],
+            ['c','补语','to disclose its exposure','不定式短语',0],
+            ['o','宾语','its exposure','n. 短语',1,1],
+            ['a','状语','before signing','介词短语',0]
+          ]
+        }
+      ]
+    },
+    {
+      key:'工程', hit:5,
+      cards:[
+        {
+          en:'Long <em>exposure</em> to salt air corrodes the steel frame.',
+          plain:'Long exposure to salt air corrodes the steel frame.',
+          zh:'长期暴露在含盐空气中会腐蚀钢结构框架。',
+          tree:[
+            ['attr','定语','Long','adj.',0],
+            ['s','主语','exposure','n.',1],
+            ['attr','定语','to salt air','介词短语',0],
+            ['v','谓语','corrodes','v.',0],
+            ['o','宾语','the steel frame','n.',0]
+          ]
+        },
+        {
+          en:'Engineers coat the joints so that <em>exposure</em> does not weaken them.',
+          plain:'Engineers coat the joints so that exposure does not weaken them.',
+          zh:'工程师给接缝做涂层，好让环境暴露不会削弱它们。',
+          tree:[
+            ['s','主语','Engineers','n.',0],
+            ['v','谓语','coat','v.',0],
+            ['o','宾语','the joints','n.',0],
+            ['a','状语','so that exposure does not weaken them','目的状语从句',0],
+            ['s','主语','exposure','n.',1,1],
+            ['v','谓语','does not weaken','v.',0,1],
+            ['o','宾语','them','pron.',0,1]
+          ]
+        }
+      ]
+    }
+  ];
+
+  var SPK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>';
+
+  var LEX = {
+    '产品经理':['iterate','scope','trade-off','retention','onboarding','churn','backlog','stakeholder','benchmark','rollout','friction','adoption'],
+    '心理学'  :['cognitive','trigger','salience','arousal','coping','rumination','priming','attachment','resilience','avoidance','recall','stimulus'],
+    '医学'    :['onset','prognosis','lesion','adverse','dosage','remission','contraindication','biopsy','chronic','incidence','regimen','relapse'],
+    '金融'    :['yield','hedge','leverage','volatility','liquidity','allocation','valuation','dividend','maturity','spread','collateral','drawdown'],
+    '法律'    :['clause','liability','indemnity','breach','jurisdiction','waiver','precedent','statutory','testimony','injunction','tort','covenant'],
+    '工程'    :['tolerance','fatigue','load','corrosion','yield','calibration','redundancy','throughput','stress','alloy','clearance','failure']
+  };
+  var WORD_RECORDINGS = {
+  "exposure": [
+    {
+      "accent": "uk",
+      "ipa": "/ɪkˈspəʊʒə(r)/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/e/exp/expos/exposure__gb_1.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/ɪkˈspəʊʒər/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/e/exp/expos/exposure__us_1.mp3"
+    }
+  ],
+  "resolve": [
+    {
+      "accent": "uk",
+      "ipa": "/rɪˈzɒlv/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/r/res/resol/resolve__gb_2.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/rɪˈzɑːlv/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/r/res/resol/resolve__us_1.mp3"
+    }
+  ],
+  "brew": [
+    {
+      "accent": "uk",
+      "ipa": "/bruː/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/b/bre/brew_/brew__gb_1.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/bruː/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/b/bre/brew_/brew__us_1.mp3"
+    }
+  ],
+  "territorial": [
+    {
+      "accent": "uk",
+      "ipa": "/ˌterəˈtɔːriəl/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/t/ter/terri/territorial__gb_2.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/ˌterəˈtɔːriəl/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/t/ter/terri/territorial__us_2.mp3"
+    }
+  ],
+  "abandon": [
+    {
+      "accent": "uk",
+      "ipa": "/əˈbændən/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/a/aba/aband/abandon__gb_2.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/əˈbændən/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/a/aba/aband/abandon__us_2.mp3"
+    }
+  ],
+  "mature": [
+    {
+      "accent": "uk",
+      "ipa": "/məˈtʃʊə(r)/,  /məˈtʃɔː(r)/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/m/mat/matur/mature__gb_1.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/məˈtʃʊr/,  /məˈtʊr/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/m/mat/matur/mature__us_1_rr.mp3"
+    }
+  ],
+  "iterate": [
+    {
+      "accent": "uk",
+      "ipa": "/ˈɪtəreɪt/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/i/ite/itera/iterate__gb_1.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/ˈɪtəreɪt/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/i/ite/itera/iterate__us_1.mp3"
+    }
+  ],
+  "plateau": [
+    {
+      "accent": "uk",
+      "ipa": "/ˈplætəʊ/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/p/pla/plate/plateau__gb_1.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/plæˈtəʊ/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/p/pla/plate/plateau__us_1.mp3"
+    }
+  ],
+  "bias": [
+    {
+      "accent": "uk",
+      "ipa": "/ˈbaɪəs/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/uk_pron/b/bia/bias_/bias__gb_2.mp3"
+    },
+    {
+      "accent": "us",
+      "ipa": "/ˈbaɪəs/",
+      "audio": "https://www.oxfordlearnersdictionaries.com/media/english/us_pron/b/bia/bias_/bias__us_1.mp3"
+    }
+  ]
+}; // Public dictionary recordings; source details in 录音来源.md.
+  var realmIdx = 0, cardIdx = 0, heroOpen = false;
+  var input = document.getElementById('askWord');
+  var note = document.getElementById('askNote');
+  var hero = document.getElementById('heroCard');
+  var again = document.getElementById('again');
+  var askForm = document.getElementById('askForm');
+  var askGo = document.getElementById('askGo');
+  var rBtn = document.getElementById('realmBtn');
+  var rMenu = document.getElementById('realmMenu');
+  var lexBox = document.getElementById('lex');
+  var viewState = 'idle';
+  var lastResult = null;
+  var requestSeq = 0, activeRequest = null;
+  var API_FALLBACK_BASE = window.SENTENCE_ISLAND_API_BASE || 'http://127.0.0.1:8767';
+  var synth = window.speechSynthesis;
+  var SENTENCE_RECORDINGS = {
+    "The new placement doubled the feature's exposure within a week.": "audio/exposure-product-1-ava.mp3"
+  };
+  var voices = [], pickedVoice = null;
+  var voiceSelect = document.getElementById('voiceChoice');
+  var chosenVoiceURI = '';
+  try{chosenVoiceURI = localStorage.getItem('sentencescope.voice') || '';}catch(e){}
+  var speechTimer = null, activeSpeech = null, speechTicket = 0, sentenceStarts = 0;
+  var activeRecording = null, recordingTicket = 0, recordingTimer = null;
+
+  function esc(value){
+    return String(value).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function apiFailure(code,status,kind,detail){
+    var error=new Error(code||'API_ERROR');
+    error.code=code||'API_ERROR';error.status=status||0;error.kind=kind||'api';error.detail=detail||'';
+    return error;
+  }
+  function errorCode(payload,status){
+    if(!payload||typeof payload!=='object')return status===404?'HTTP_404':'HTTP_'+status;
+    var detail=payload.detail;
+    return payload.code||(payload.error&&payload.error.code)||(detail&&typeof detail==='object'&&detail.code)||(status===404?'HTTP_404':'HTTP_'+status);
+  }
+  function errorDetail(payload){
+    if(!payload||typeof payload!=='object')return '';
+    var detail=payload.detail||(payload.error&&payload.error.detail)||(payload.error&&payload.error.message)||payload.message;
+    if(detail&&typeof detail==='object')detail=detail.detail||detail.message||'';
+    return typeof detail==='string'?detail:'';
+  }
+  function apiBases(){
+    var bases=[''];
+    var fallback=String(API_FALLBACK_BASE||'').replace(/\/+$/,'');
+    if(fallback&&fallback!==window.location.origin)bases.push(fallback);
+    return bases;
+  }
+  async function apiFetch(path,options,signal){
+    var bases=apiBases(),lastNetwork=null;
+    for(var i=0;i<bases.length;i++){
+      var response;
+      try{
+        response=await fetch(bases[i]+path,Object.assign({},options||{},{signal:signal,headers:Object.assign({'Accept':'application/json'},(options&&options.headers)||{})}));
+      }catch(error){
+        if(error&&error.name==='AbortError')throw error;
+        lastNetwork=error;
+        if(i<bases.length-1)continue;
+        throw apiFailure('SERVICE_UNREACHABLE',0,'unreachable','');
+      }
+      var raw=await response.text(),payload=null;
+      if(raw){try{payload=JSON.parse(raw);}catch(error){payload=null;}}
+      if(response.ok&&payload!==null){
+        if(payload&&payload.ok===false)throw apiFailure(errorCode(payload,response.status),response.status,'api',errorDetail(payload));
+        return payload;
+      }
+      var code=errorCode(payload,response.status);
+      var isSameOriginRouteMiss=i<bases.length-1&&(payload===null||(response.status===404&&(code==='HTTP_404'||code==='NOT_FOUND')));
+      if(isSameOriginRouteMiss)continue;
+      throw apiFailure(code,response.status,payload===null?'response':'api',errorDetail(payload));
+    }
+    throw apiFailure('SERVICE_UNREACHABLE',0,'unreachable',lastNetwork&&lastNetwork.message||'');
+  }
+  function envelope(payload,key){
+    if(!payload||typeof payload!=='object')return null;
+    if(payload[key]!=null)return payload[key];
+    if(payload.data&&typeof payload.data==='object'&&payload.data[key]!=null)return payload.data[key];
+    return null;
+  }
+  function normalizeAccent(value,audio){
+    var text=String(value||'').toLowerCase(),url=String(audio||'').toLowerCase();
+    if(/(^|[-_ ])(uk|gb|british|en-gb)([-_ ]|$)/.test(text)||/\/uk_pron\//.test(url)||/__gb_/.test(url))return 'uk';
+    if(/(^|[-_ ])(us|usa|american|en-us)([-_ ]|$)/.test(text)||/\/us_pron\//.test(url)||/__us_/.test(url))return 'us';
+    return 'other';
+  }
+  function normalizePronunciations(list){
+    if(!Array.isArray(list))return [];
+    return list.map(function(item){
+      if(typeof item==='string')return {accent:'other',ipa:item,audio:''};
+      item=item||{};
+      var audio=item.audio_url||item.audioUrl||item.audio||item.url||'';
+      return {
+        accent:normalizeAccent(item.accent||item.locale||item.region||item.country||item.lang,audio),
+        ipa:String(item.ipa||item.text||item.phonetic||''),
+        audio:String(audio||'')
+      };
+    }).filter(function(item){return item.ipa||item.audio;});
+  }
+  function normalizeWord(payload,query,optional){
+    var raw=envelope(payload,'word')||envelope(payload,'entry');
+    if(!raw&&payload&&payload.data&&payload.data.lemma)raw=payload.data;
+    if(!raw&&payload&&payload.lemma)raw=payload;
+    if(!raw){
+      var nestedCard=envelope(payload,'card');
+      if(nestedCard&&typeof nestedCard==='object'&&(nestedCard.word||nestedCard.senses)){
+        raw={
+          lemma:nestedCard.word||query,
+          level:nestedCard.level,
+          senses:nestedCard.senses||[],
+          zh_gloss:nestedCard.zh_gloss,
+          pronunciations:nestedCard.pronunciations||nestedCard.phonetics||[]
+        };
+      }
+    }
+    if(!raw){if(optional)return null;throw apiFailure('BAD_RESPONSE',200,'response','word');}
+    if(typeof raw==='string')raw={lemma:raw};
+    var senses=Array.isArray(raw.senses)?raw.senses:[];
+    var pronunciations=raw.pronunciations||raw.phonetics||raw.pronunciation||[];
+    return {
+      query:query,
+      lemma:String(raw.lemma||raw.word||query).toLowerCase(),
+      level:String(raw.level||raw.cefr_level||''),
+      zhGloss:String(raw.zh_gloss||raw.zhGloss||raw.chinese||''),
+      senses:senses.map(function(s,index){
+        s=s||{};
+        return {
+          id:String(s.sense_id||s.id||s.synset||''),
+          definition:String(s.definition||s.gloss||s.meaning||''),
+          pos:String(s.pos||''),
+          rank:s.sense_rank==null?index+1:Number(s.sense_rank)
+        };
+      }).filter(function(s){return s.definition;}),
+      pronunciations:normalizePronunciations(Array.isArray(pronunciations)?pronunciations:[pronunciations])
+    };
+  }
+  function normalizeCard(payload){
+    var raw=envelope(payload,'card')||envelope(payload,'result');
+    if(!raw&&payload&&payload.data&&payload.data.sentence)raw=payload.data;
+    if(!raw&&payload&&payload.sentence)raw=payload;
+    if(!raw||typeof raw!=='object')throw apiFailure('BAD_RESPONSE',200,'response','card');
+    var segments=Array.isArray(raw.segments)?raw.segments.map(function(segment){
+      segment=segment||{};
+      return {
+        text:String(segment.text||''),
+        layer1:String(segment.layer1||segment.tag||''),
+        layer1Label:String(segment.layer1_label||segment.layer1Label||''),
+        layer2:segment.layer2==null?'':String(segment.layer2),
+        layer2Label:String(segment.layer2_label||segment.layer2Label||''),
+        isTarget:Boolean(segment.is_target==null?segment.isTarget:segment.is_target),
+        depth:Number(segment.depth||0),
+        note:String(segment.note||''),
+        pos:String(segment.pos||'')
+      };
+    }):[];
+    var sentence=String(raw.sentence||'');
+    if(!sentence||!segments.length)throw apiFailure('BAD_RESPONSE',200,'response','card fields');
+    return {
+      sentence:sentence,
+      translation:String(raw.translation||raw.zh||''),
+      senseId:String(raw.sense_id||raw.senseId||''),
+      segments:segments,
+      level:String(raw.level||raw.cefr_level||''),
+      sentenceAudio:String(raw.sentence_audio_url||raw.sentenceAudioUrl||''),
+      meta:raw.meta||raw.generation_meta||{}
+    };
+  }
+  function mergeWord(primary,secondary){
+    if(!secondary)return primary;
+    return {
+      query:primary.query,
+      lemma:secondary.lemma||primary.lemma,
+      level:secondary.level||primary.level,
+      zhGloss:secondary.zhGloss||primary.zhGloss,
+      senses:secondary.senses.length?secondary.senses:primary.senses,
+      pronunciations:secondary.pronunciations.length?secondary.pronunciations:primary.pronunciations
+    };
+  }
+  function setSearchBusy(busy){
+    askForm.setAttribute('aria-busy',String(busy));
+    askGo.setAttribute('aria-busy',String(busy));
+    askGo.textContent=busy?'生成中…':'搜索';
+    again.disabled=busy||viewState!=='success';
+  }
+  function cancelActiveRequest(){
+    if(activeRequest&&activeRequest.controller)activeRequest.controller.abort();
+    activeRequest=null;requestSeq++;setSearchBusy(false);
+  }
+  function layerInfo(code,label){
+    var map={S:['s','主语'],V:['v','谓语'],O:['o','宾语'],P:['p','表语'],C:['c','补语'],A:['a','状语'],Attr:['attr','定语']};
+    var found=map[code]||['a',code||'成分'];
+    return {css:found[0],label:label||found[1]};
+  }
+  function layer2Label(code,label){
+    var map={'CL-N':'名词性从句','CL-REL':'定语从句','CL-ADV':'状语从句','PH-INF':'不定式短语','PH-GER':'动名词短语','PH-PART':'分词短语','PH-PREP':'介词短语'};
+    return label||map[code]||'';
+  }
+  function pronunciationMarkup(word){
+    var records=word.pronunciations.length?word.pronunciations:(WORD_RECORDINGS[word.lemma]||[]);
+    var selected=[],seen={};
+    records.forEach(function(record){
+      var accent=record.accent||normalizeAccent('',record.audio);
+      var key=accent==='other'?'other':accent;
+      if(seen[key])return;seen[key]=true;
+      selected.push({accent:accent,ipa:record.ipa||'',audio:record.audio||''});
+    });
+    if(!selected.length)return '';
+    return '<div class="phon">'+selected.map(function(record){
+      var label=record.accent==='uk'?'英':record.accent==='us'?'美':'发音';
+      return '<span class="ipa" data-accent="'+esc(record.accent)+'">'+label+(record.ipa?' '+esc(record.ipa):'')+'</span>';
+    }).join('')+'</div>';
+  }
+  function highlightedSentence(sentence,word){
+    var haystack=sentence.toLowerCase(),needle=String(word||'').toLowerCase(),from=0;
+    while(needle){
+      var index=haystack.indexOf(needle,from);if(index<0)break;
+      var before=index>0?haystack.charAt(index-1):'';
+      var after=haystack.charAt(index+needle.length);
+      if(!/[a-z]/.test(before)&&!/[a-z]/.test(after)){
+        return esc(sentence.slice(0,index))+'<em>'+esc(sentence.slice(index,index+needle.length))+'</em>'+esc(sentence.slice(index+needle.length));
+      }
+      from=index+needle.length;
+    }
+    return esc(sentence);
+  }
+  function renderDynamicCard(result){
+    var word=result.word,card=result.card,realm=result.realm;
+    var sentenceHtml=highlightedSentence(card.sentence,result.query||word.lemma);
+    var rows=card.segments.filter(function(segment){
+      // 标点用于校验句子完整性，但不应被展示成独立的语法成分。
+      return /[a-z0-9]/i.test(segment.text);
+    }).map(function(segment){
+      var info=layerInfo(segment.layer1,segment.layer1Label);
+      var detail=[segment.pos,layer2Label(segment.layer2,segment.layer2Label),segment.note].filter(Boolean).join(' · ');
+      return '<li'+(segment.depth>0?' class="nest"':'')+'><span class="tag t-'+esc(info.css)+'">'+esc(info.label)+'</span><span class="frag'+(segment.isTarget?' hit':'')+'">'+esc(segment.text)+'</span>'+(detail?'<span class="pos">'+esc(detail)+'</span>':'')+'</li>';
+    }).join('');
+    var senses=word.senses.slice().sort(function(a,b){return a.rank-b.rank;});
+    var selected=senses.findIndex(function(sense){return sense.id===card.senseId;});
+    var senseRows=senses.map(function(sense,index){
+      var on=index===selected,visible=on||(selected<0&&index===0);
+      return '<div class="sense'+(on?' on':'')+'"'+(!visible?' data-more'+(!heroOpen?' hidden':''):'')+'><span class="n">'+(index+1)+'</span><span lang="en">'+esc(sense.definition)+'</span></div>';
+    }).join('');
+    var hiddenCount=Math.max(0,senses.length-1);
+    var toggle=hiddenCount?'<button type="button" class="toggle" id="heroToggle" aria-expanded="'+heroOpen+'">'+(heroOpen?'收起':'还有 '+hiddenCount+' 个义项')+'</button>':'';
+    var level=card.level||word.level||result.level||'B2';
+    var sentenceAudio=card.sentenceAudio?' data-sentence-audio="'+esc(card.sentenceAudio)+'"':'';
+    hero.innerHTML='<div class="card swap">'+
+      '<div class="meta"><span class="word">'+esc(word.lemma)+'</span><span>'+esc(realm)+'</span><span>'+esc(level)+'</span></div>'+
+      pronunciationMarkup(word)+
+      (word.zhGloss?'<div class="word-meaning" aria-label="中文释义"><span class="meaning-label">中文释义</span><p>'+esc(word.zhGloss)+'</p></div>':'')+
+      '<p class="sentence" lang="en">'+sentenceHtml+' <button type="button" class="say" aria-label="朗读整句" title="朗读整句" data-sentence="'+esc(card.sentence)+'"'+sentenceAudio+'>'+SPK+'</button></p>'+
+      '<p class="zh">'+esc(card.translation)+'</p><ul class="tree" aria-label="句子成分">'+rows+'</ul>'+
+      (senses.length?'<div class="senses" aria-label="英文义项">'+senseRows+toggle+'</div>':'')+
+      '</div>';
+    viewState='success';again.hidden=false;again.disabled=false;
+    setupAudio(hero);setupWordAudio(hero,word.pronunciations);
+  }
+
+  function renderHero(){
+    var r = REALMS[realmIdx], d = r.cards[cardIdx];
+    var rows = d.tree.map(function(x){
+      return '<li'+(x[5]?' class="nest"':'')+'><span class="tag t-'+x[0]+'">'+esc(x[1])+'</span>'+
+        '<span class="frag'+(x[4]?' hit':'')+'">'+esc(x[2])+'</span><span class="pos">'+esc(x[3])+'</span></li>';
+    }).join('');
+    var senses = SENSES.map(function(s,n){
+      var on = n === r.hit;
+      return '<div class="sense'+(on?' on':'')+'"'+(!on?' data-more'+(!heroOpen?' hidden':''):'')+'><span class="n">'+(n+1)+'</span><span>'+esc(s)+'</span></div>';
+    }).join('');
+    hero.innerHTML = '<div class="card swap">'+
+      '<div class="meta"><span class="word">exposure</span><span>'+esc(r.key)+'</span><span>B2 · 样例</span><span>预置样卡 '+(cardIdx+1)+' / '+r.cards.length+'</span></div>'+
+      '<div class="phon"><span class="ipa">英 /ɪkˈspəʊʒə(r)/</span><span class="ipa">美 /ɪkˈspoʊʒər/</span></div>'+
+      '<p class="sentence" lang="en">'+d.en+' <button type="button" class="say" aria-label="朗读整句" title="朗读整句" data-sentence="'+esc(d.plain)+'">'+SPK+'</button></p><p class="zh">'+esc(d.zh)+'</p>'+
+      '<ul class="tree" aria-label="句子成分">'+rows+'</ul>'+
+      '<div class="senses" aria-label="预置中文义项样例">'+senses+'<button type="button" class="toggle" id="heroToggle" aria-expanded="'+heroOpen+'">'+(heroOpen?'收起':'还有 '+(SENSES.length-1)+' 个义项')+'</button></div></div>';
+    viewState='success';
+    lastResult={source:'local',query:'exposure',realm:r.key,level:'B2',localIndex:cardIdx};
+    again.hidden=false;again.disabled=false;
+    setupAudio(hero);
+    setupWordAudio(hero);
+  }
+
+  function showState(state,message,title,detail){
+    stopSpeech();
+    viewState = state;
+    again.disabled=true;again.hidden=true;
+    note.textContent = message;
+    if(state==='idle'){hero.innerHTML='';return;}
+    hero.innerHTML='<div class="empty">'+esc(title||'暂时无法显示单词卡片')+(detail?'<span>'+esc(detail)+'</span>':'')+'</div>';
+  }
+
+  function showLoading(word,reason){
+    stopSpeech();viewState='loading';heroOpen=false;
+    again.disabled=true;again.hidden=true;setSearchBusy(true);
+    var action=reason==='again'?'正在换一个例句':reason==='realm'?'正在按新领域生成':'正在生成单词卡片';
+    note.textContent=action+'…';
+    hero.innerHTML='<div class="empty" aria-busy="true">'+esc(action)+'<span>正在查询「'+esc(word)+'」，通常需要几秒钟。</span></div>';
+  }
+  function isUnconfigured(error){
+    return /^(MODEL_NOT_CONFIGURED|MODEL_CONFIG_MISSING|LLM_NOT_CONFIGURED|CONFIG_MISSING|SERVICE_NOT_CONFIGURED)$/.test(error.code)||/api.?key|模型配置|not configured|configuration missing/i.test(error.detail||'');
+  }
+  function showRequestError(error,word){
+    if(error.code==='WORD_NOT_FOUND'||error.code==='HTTP_404'){
+      showState('not-found','词库中暂无「'+word+'」。','词库中暂无这个词','请检查拼写，或换一个英文单词。');return;
+    }
+    if(isUnconfigured(error)){
+      showState('unconfigured','生成服务尚未配置。','生成服务尚未配置','配置完成后即可生成这个单词的卡片。');return;
+    }
+    if(error.code==='MODEL_TIMEOUT'){
+      showState('failed','这次生成等待时间较长，请再试一次。','这次没有生成完成','可以保留当前单词，再点一次搜索。');return;
+    }
+    if(/^(VALIDATION_EXHAUSTED|PARSE_FAILED|SEG_MISMATCH|SENSE_INVALID|TAG_INVALID|TARGET_INVALID)$/.test(error.code)){
+      showState('failed','这次没有生成出合格卡片，请再试一次。','这次没有生成成功','输入内容已经保留，可以直接重试。');return;
+    }
+    if(error.kind==='unreachable'){
+      showState('offline','暂时无法连接生成服务。','生成服务暂时未连接','服务启动后，再点一次搜索即可。');return;
+    }
+    if(error.kind==='response'||error.code==='BAD_RESPONSE'){
+      showState('failed','生成服务返回的数据不完整，请再试一次。','卡片暂时无法显示','输入内容已经保留。');return;
+    }
+    showState('failed','生成暂时没有成功，请稍后再试。','生成暂时没有成功','输入内容已经保留。');
+  }
+  async function requestCard(options){
+    options=options||{};
+    var word=String(options.word==null?input.value:options.word).trim().toLowerCase();
+    document.getElementById('lexNote').textContent='';
+    input.removeAttribute('aria-invalid');
+    if(!word){
+      cancelActiveRequest();lastResult=null;
+      showState('idle','请输入一个英文单词。','','');return;
+    }
+    if(!/^[a-z]+(?:[-'][a-z]+)*$/.test(word)){
+      cancelActiveRequest();input.setAttribute('aria-invalid','true');
+      showState('invalid','请输入单个英文单词，可包含连字符或撇号。','请检查输入的单词','例如 exposure、trade-off。');return;
+    }
+    var realm=REALMS[realmIdx].key,level='B2',key=word+'|'+realm+'|'+level;
+    if(activeRequest&&activeRequest.key===key)return;
+    if(activeRequest&&activeRequest.controller)activeRequest.controller.abort();
+    var controller=new AbortController(),seq=++requestSeq;
+    activeRequest={controller:controller,seq:seq,key:key,word:word,realm:realm};
+    input.value=word;showLoading(word,options.reason||'search');
+    try{
+      var wordPayload=await apiFetch('/api/word/'+encodeURIComponent(word),{method:'GET'},controller.signal);
+      var wordEntry=normalizeWord(wordPayload,word,false);
+      if(seq!==requestSeq)return;
+      var cardRequest={word:word,realm:realm,level:level};
+      if(options.reason==='again'&&lastResult&&lastResult.source==='api'&&lastResult.card){
+        cardRequest.previous_sentence=lastResult.card.sentence;
+      }
+      var cardPayload=await apiFetch('/api/card',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(cardRequest)
+      },controller.signal);
+      if(seq!==requestSeq)return;
+      var cardWord=normalizeWord(cardPayload,word,true);
+      wordEntry=mergeWord(wordEntry,cardWord);
+      var card=normalizeCard(cardPayload);
+      var meta=envelope(cardPayload,'meta')||card.meta||{attempts:cardPayload.attempts,elapsed_ms:cardPayload.elapsed_ms};
+      lastResult={source:'api',query:word,word:wordEntry,card:card,meta:meta,realm:realm,level:level};
+      heroOpen=false;renderDynamicCard(lastResult);
+      note.textContent='已生成 '+wordEntry.lemma+' · '+realm+' 的单词卡片。';
+      Array.from(lexBox.querySelectorAll('button[data-w]')).forEach(function(button){button.classList.toggle('seen',button.dataset.w===word);});
+    }catch(error){
+      if(error&&error.name==='AbortError')return;
+      if(seq!==requestSeq)return;
+      if(error&&error.kind==='unreachable'&&word==='exposure'){
+        cardIdx=options.reason==='again'?(cardIdx+1)%REALMS[realmIdx].cards.length:0;
+        heroOpen=false;renderHero();
+        note.textContent='生成服务暂未连接，先显示 exposure 的本地示例。';
+      }else if((options.reason==='again'||options.reason==='realm')&&lastResult){
+        var failedRealm=realm;
+        if(options.reason==='realm'&&lastResult.realm&&lastResult.realm!==realm){
+          var previousRealmIndex=REALMS.findIndex(function(item){return item.key===lastResult.realm;});
+          if(previousRealmIndex>=0){
+            realmIdx=previousRealmIndex;cardIdx=0;heroOpen=false;
+            rBtn.firstChild.textContent=REALMS[realmIdx].key;
+            paintMenu();renderLex();
+          }
+        }
+        if(lastResult.source==='api')renderDynamicCard(lastResult);
+        else{cardIdx=lastResult.localIndex||0;renderHero();}
+        note.textContent=options.reason==='realm'
+          ? failedRealm+' 的卡片没有生成成功，仍显示上一次结果。'
+          : '新例句没有生成成功，仍显示上一次结果；可以再试一次。';
+      }else showRequestError(error||apiFailure('API_ERROR',0,'api',''),word);
+    }finally{
+      if(seq===requestSeq){activeRequest=null;setSearchBusy(false);}
+    }
+  }
+
+  function submitQuery(){
+    stopSpeech();
+    requestCard({word:input.value,reason:'search'});
+  }
+
+  askForm.addEventListener('submit',function(e){e.preventDefault();submitQuery();});
+  input.addEventListener('keydown',function(e){if(e.isComposing && e.key === 'Enter') e.preventDefault();});
+  input.addEventListener('input',function(){
+    input.removeAttribute('aria-invalid');
+    document.getElementById('lexNote').textContent = '';
+    var shouldRestore=Boolean(lastResult&&!hero.querySelector('.card')&&lastResult.realm===REALMS[realmIdx].key);
+    if(activeRequest)cancelActiveRequest();
+    if(shouldRestore){
+      if(lastResult.source==='api')renderDynamicCard(lastResult);
+      else{cardIdx=lastResult.localIndex||0;renderHero();}
+    }else if(!lastResult)hero.innerHTML='';
+    viewState='editing';again.disabled=true;again.hidden=!lastResult;
+    note.textContent=hero.querySelector('.card')?'输入完成后点击「搜索」；当前卡片仍是上次的结果。':'输入完成后点击「搜索」。';
+  });
+  hero.addEventListener('click',function(e){
+    if(e.target.closest('#restoreExample')){input.value='exposure';requestCard({word:'exposure'});input.focus();}
+  });
+  again.addEventListener('click',function(){
+    if(viewState!=='success'||!lastResult)return;
+    stopSpeech();
+    if(lastResult.source==='local'){
+      cardIdx=(cardIdx+1)%REALMS[realmIdx].cards.length;heroOpen=false;renderHero();
+      note.textContent='生成服务暂未连接，已切换到 '+REALMS[realmIdx].key+' 的另一条本地示例。';
+    }else requestCard({word:lastResult.query,reason:'again'});
+  });
+
+  function renderLex(){
+    var realm = REALMS[realmIdx].key;
+    document.getElementById('lexTitle').textContent = realm+'常见的词';
+    lexBox.innerHTML = LEX[realm].map(function(w){return '<button type="button" data-w="'+esc(w)+'">'+esc(w)+'</button>';}).join('');
+    document.getElementById('lexNote').textContent = '';
+  }
+  lexBox.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-w]'); if(!b) return;
+    input.value=b.dataset.w;requestCard({word:b.dataset.w,reason:'search'});
+  });
+
+  function closeMenu(restoreFocus){
+    rMenu.hidden=true; rBtn.setAttribute('aria-expanded','false');
+    if(restoreFocus) rBtn.focus();
+  }
+  function paintMenu(){
+    rMenu.innerHTML=REALMS.map(function(r,i){return '<button type="button" role="menuitemradio" aria-checked="'+(i===realmIdx)+'" tabindex="-1" data-i="'+i+'"'+(i===realmIdx?' class="on"':'')+'>'+esc(r.key)+'</button>';}).join('');
+  }
+  function openMenu(){
+    rMenu.hidden=false; rBtn.setAttribute('aria-expanded','true');
+    rMenu.querySelector('[data-i="'+realmIdx+'"]').focus();
+  }
+  rBtn.addEventListener('click',function(){if(rMenu.hidden)openMenu();else closeMenu(true);});
+  rBtn.addEventListener('keydown',function(e){if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();openMenu();}});
+  rMenu.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-i]');if(!b)return;
+    var pendingWord=activeRequest&&activeRequest.word;
+    var currentWord=pendingWord||(lastResult&&lastResult.query);
+    stopSpeech();realmIdx=Number(b.dataset.i);cardIdx=0;heroOpen=false;
+    rBtn.firstChild.textContent=REALMS[realmIdx].key;
+    closeMenu(true);paintMenu();renderLex();
+    if(currentWord){input.value=currentWord;requestCard({word:currentWord,reason:'realm'});}
+    else note.textContent='领域已切换为 '+REALMS[realmIdx].key+'，请输入一个英文单词。';
+  });
+  rMenu.addEventListener('keydown',function(e){
+    var buttons=Array.from(rMenu.querySelectorAll('button'));
+    var index=buttons.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault();buttons[(index+(e.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length].focus();
+    }else if(e.key==='Home'||e.key==='End'){
+      e.preventDefault();buttons[e.key==='Home'?0:buttons.length-1].focus();
+    }
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!rMenu.hidden){e.preventDefault();closeMenu(true);}});
+  document.addEventListener('click',function(e){if(!e.target.closest('.realm'))closeMenu(false);});
+  document.addEventListener('focusin',function(e){if(!e.target.closest('.realm'))closeMenu(false);});
+
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.toggle');if(!btn||btn.id==='restoreExample')return;
+    var box=btn.parentElement;
+    var items=box.querySelectorAll('[data-more]');if(!items.length)return;
+    var opening=btn.getAttribute('aria-expanded')!=='true';
+    items.forEach(function(el){el.hidden=!opening;el.classList.remove('hidden');});
+    btn.setAttribute('aria-expanded',String(opening));
+    btn.textContent=opening?'收起':'还有 '+items.length+' 个义项';
+    if(btn.id==='heroToggle')heroOpen=opening;
+  });
+  document.querySelectorAll('.toggle').forEach(function(btn){
+    btn.setAttribute('aria-expanded','false');btn.setAttribute('type','button');
+    btn.parentElement.querySelectorAll('[data-more]').forEach(function(el){el.hidden=true;el.classList.remove('hidden');});
+  });
+
+  function speechStatus(btn,message,isError){
+    var line=btn.parentElement;
+    var status=line.querySelector('.audio-status');
+    if(!status){status=document.createElement('span');status.className='audio-status';status.setAttribute('role','status');line.appendChild(status);}
+    status.textContent=message;
+    status.classList.toggle('visually-hidden',!isError);
+    if(btn.hasAttribute('data-sentence'))status.lang='zh-CN';
+  }
+  function resetSpeechButton(btn){
+    btn.classList.remove('on');btn.setAttribute('aria-pressed','false');
+    btn.innerHTML=SPK;btn.setAttribute('aria-label','朗读整句');btn.title='朗读整句';
+  }
+  function stopSpeech(){
+    stopRecording();
+    speechTicket++;clearTimeout(speechTimer);speechTimer=null;
+    if(activeSpeech){
+      var oldSpeech=activeSpeech;activeSpeech=null;
+      if(oldSpeech.audio){oldSpeech.audio.pause();oldSpeech.audio.removeAttribute('src');oldSpeech.audio.load();}
+      resetSpeechButton(oldSpeech.btn);speechStatus(oldSpeech.btn,'');
+    }
+    if(synth)synth.cancel();
+  }
+  function setupAudio(root){
+    root.querySelectorAll('button[data-sentence]').forEach(function(btn){
+      btn.setAttribute('type','button');btn.setAttribute('aria-pressed','false');btn.setAttribute('aria-label','朗读整句');btn.title='朗读整句';
+      var recording=SENTENCE_RECORDINGS[btn.dataset.sentence];
+      if(recording)btn.dataset.sentenceAudio=recording;
+      if(!recording&&(!synth||!window.SpeechSynthesisUtterance)){btn.disabled=true;speechStatus(btn,'当前浏览器不支持整句朗读。',true);}
+    });
+  }
+  function loadVoices(){
+    voices=synth?synth.getVoices():[];
+    var novelty=/^(Albert|Bahh|Bad News|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Trinoids|Whisper|Wobble|Zarvox)$/i;
+    var preferred=['Google US English','Samantha','Ava','Allison','Susan','Zoe','Alex','Microsoft Aria','Microsoft Jenny','Microsoft Zira','Google UK English Female','Daniel','Kate','Serena','Oliver'];
+    function rank(v){
+      var idx=preferred.findIndex(function(name){return v.name.indexOf(name)!==-1;});
+      return (idx<0?1000:idx*10)+(v.default?-1:0);
+    }
+    var candidates=voices.filter(function(v){return /^en(?:[-_]|$)/i.test(v.lang)&&!novelty.test(v.name);}).sort(function(a,b){return rank(a)-rank(b);});
+    var familiar=candidates.filter(function(v){return preferred.some(function(name){return v.name.indexOf(name)!==-1;});});
+    if(familiar.length)candidates=familiar;
+    pickedVoice=candidates.find(function(v){return v.voiceURI===chosenVoiceURI;})||candidates[0]||null;
+    voiceSelect.innerHTML='';
+    candidates.forEach(function(v){var option=document.createElement('option');option.value=v.voiceURI;option.textContent=v.name+' · '+v.lang;voiceSelect.appendChild(option);});
+    voiceSelect.disabled=!candidates.length;
+    if(pickedVoice) voiceSelect.value=pickedVoice.voiceURI;
+    else{var unavailable=document.createElement('option');unavailable.textContent='尚未找到可用的英语声音';voiceSelect.appendChild(unavailable);}
+    var diag=document.getElementById('diag');
+    if(diag)diag.textContent=!synth?'当前浏览器不支持语音合成。':pickedVoice?'整句朗读：'+pickedVoice.name+'（'+pickedVoice.lang+'）':'尚未检测到可用英语声音，请检查设备的英语语音设置。';
+  }
+  voiceSelect.addEventListener('change',function(){
+    stopSpeech();chosenVoiceURI=voiceSelect.value;
+    try{localStorage.setItem('sentencescope.voice',chosenVoiceURI);}catch(e){}
+    loadVoices();
+  });
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-sentence]');if(!btn||btn.disabled)return;
+    if(activeSpeech&&activeSpeech.btn===btn){stopSpeech();return;}
+    stopSpeech();
+    var ticket=speechTicket;
+    if(btn.dataset.sentenceAudio){
+      var audio=new Audio(btn.dataset.sentenceAudio);
+      activeSpeech={btn:btn,audio:audio};
+      btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.innerHTML=SPK;btn.setAttribute('aria-label','停止朗读');btn.title='停止朗读';
+      speechStatus(btn,'准备朗读…');
+      function audioDone(message,isError){
+        if(ticket!==speechTicket||!activeSpeech||activeSpeech.audio!==audio)return;
+        resetSpeechButton(btn);speechStatus(btn,message,isError);activeSpeech=null;
+      }
+      audio.addEventListener('playing',function(){
+        if(ticket!==speechTicket)return;
+        sentenceStarts++;speechStatus(btn,'正在朗读');
+        document.getElementById('tally').textContent='整句朗读开始 '+sentenceStarts+' 次（仅本页，刷新归零）';
+      });
+      audio.addEventListener('ended',function(){audioDone('朗读结束');});
+      audio.addEventListener('error',function(){audioDone('朗读未成功，请再试一次。',true);});
+      var recordedPlay=audio.play();if(recordedPlay&&recordedPlay.catch)recordedPlay.catch(function(){audioDone('朗读未成功，请再试一次。',true);});
+      return;
+    }
+    loadVoices();
+    if(!pickedVoice){speechStatus(btn,'尚未找到合适的英语声音，请检查设备的英语语音设置。',true);return;}
+    activeSpeech={btn:btn,utterance:null};
+    btn.classList.add('on');btn.setAttribute('aria-pressed','true');btn.innerHTML=SPK;btn.setAttribute('aria-label','停止朗读');btn.title='停止朗读';
+    speechStatus(btn,'准备朗读…');
+    speechTimer=setTimeout(function(){
+      if(ticket!==speechTicket||!btn.isConnected)return;
+      var utterance=new SpeechSynthesisUtterance(btn.dataset.sentence);
+      utterance.lang=pickedVoice?pickedVoice.lang:'en-US';
+      if(pickedVoice)utterance.voice=pickedVoice;
+      utterance.rate=1;activeSpeech.utterance=utterance;
+      utterance.onstart=function(){
+        if(ticket!==speechTicket)return;
+        sentenceStarts++;speechStatus(btn,'正在朗读');
+        document.getElementById('tally').textContent='整句朗读开始 '+sentenceStarts+' 次（仅本页，刷新归零）';
+      };
+      function done(message,isError){if(ticket!==speechTicket)return;resetSpeechButton(btn);speechStatus(btn,message,isError);activeSpeech=null;}
+      utterance.onend=function(){done('朗读结束');};
+      utterance.onerror=function(e){done(e.error==='canceled'||e.error==='interrupted'?'':'朗读未成功，请再试一次或检查设备的英语语音。',true);};
+      try{synth.speak(utterance);}catch(e){done('朗读未成功，请再试一次。',true);}
+    },90);
+  });
+
+  function setupWordAudio(root,suppliedRecords){
+    root.querySelectorAll('.card').forEach(function(card){
+      var word=card.querySelector('.word').textContent.trim().toLowerCase();
+      var phon=card.querySelector('.phon');
+      if(!phon||phon.dataset.recordingReady)return;
+      phon.dataset.recordingReady='true';
+      var records=Array.isArray(suppliedRecords)&&suppliedRecords.length?suppliedRecords:(WORD_RECORDINGS[word]||[]);
+      var spans=Array.from(phon.querySelectorAll('.ipa'));
+      spans.forEach(function(span){
+        var accent=span.dataset.accent||(span.textContent.trim().startsWith('英')?'uk':span.textContent.trim().startsWith('美')?'us':'other');
+        var label=accent==='uk'?'英式':accent==='us'?'美式':'单词';
+        var record=records.find(function(r){return (r.accent||normalizeAccent('',r.audio))===accent&&r.audio;});
+        if(!record&&accent==='other')record=records.find(function(r){return r.audio;});
+        if(!record)return; // A text-only IPA stays visible when that recording is unavailable.
+        var ipa=record.ipa||span.textContent.replace(/^(英|美|发音)\s*/, '');
+        var btn=document.createElement('button');
+        btn.type='button';btn.className='word-pron accent-'+accent;
+        btn.dataset.recording=record.audio;btn.dataset.word=word;btn.dataset.accent=accent;
+        btn.setAttribute('aria-label','播放 '+word+' '+label+'发音 '+ipa);
+        btn.setAttribute('aria-pressed','false');
+        btn.title=label+'真人发音';
+        btn.innerHTML=SPK+'<span class="accent-label">'+(accent==='uk'?'英':accent==='us'?'美':'发音')+'</span>'+(ipa?'<span class="ipa" lang="en">'+esc(ipa)+'</span>':'');
+        span.replaceWith(btn);
+      });
+    });
+  }
+  function stopRecording(){
+    recordingTicket++;clearTimeout(recordingTimer);recordingTimer=null;
+    if(activeRecording){
+      var old=activeRecording;activeRecording=null;
+      old.audio.pause();old.audio.removeAttribute('src');old.audio.load();
+      old.btn.setAttribute('aria-pressed','false');old.btn.removeAttribute('aria-busy');
+      speechStatus(old.btn,'');
+    }
+    document.querySelectorAll('audio[data-word-recording]').forEach(function(el){el.remove();});
+  }
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-recording]');if(!btn)return;
+    if(activeRecording&&activeRecording.btn===btn){stopRecording();return;}
+    stopSpeech();
+    var audio=new Audio(btn.dataset.recording);
+    audio.hidden=true;audio.dataset.wordRecording=btn.dataset.word;
+    btn.parentElement.appendChild(audio);
+    var ticket=recordingTicket;
+    activeRecording={audio:audio,btn:btn};
+    btn.setAttribute('aria-busy','true');btn.setAttribute('aria-pressed','true');
+    speechStatus(btn,'正在加载发音…');
+    function current(){return ticket===recordingTicket&&activeRecording&&activeRecording.audio===audio;}
+    function fail(){
+      if(!current())return;
+      stopRecording();speechStatus(btn,'发音暂时无法播放，请再试一次。');
+    }
+    audio.addEventListener('playing',function(){
+      if(!current())return;clearTimeout(recordingTimer);recordingTimer=null;
+      btn.removeAttribute('aria-busy');speechStatus(btn,'');
+    });
+    audio.addEventListener('ended',function(){
+      if(!current())return;clearTimeout(recordingTimer);recordingTimer=null;
+      btn.setAttribute('aria-pressed','false');btn.removeAttribute('aria-busy');
+      speechStatus(btn,'');activeRecording=null;
+    });
+    audio.addEventListener('error',fail);
+    recordingTimer=setTimeout(fail,15000);
+    var play=audio.play();if(play&&play.catch)play.catch(fail);
+  });
+
+  window.addEventListener('pagehide',stopSpeech);
+  if(synth)synth.addEventListener('voiceschanged',loadVoices);
+  loadVoices();paintMenu();renderLex();setupAudio(document);setupWordAudio(document);showState('idle','','','');setSearchBusy(false);
+
+</script>
+</body>
+</html>

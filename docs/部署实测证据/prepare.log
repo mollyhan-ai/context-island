@@ -1,0 +1,95 @@
+{
+  "commit": "550b6625bcef1f2abff2ff770a5a0d272c9c6b2a",
+  "resources": [
+    {
+      "url": "https://raw.githubusercontent.com/nltk/nltk_data/550b6625bcef1f2abff2ff770a5a0d272c9c6b2a/packages/corpora/wordnet.zip",
+      "bytes": 10775600,
+      "sha256": "cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nltk/nltk_data/550b6625bcef1f2abff2ff770a5a0d272c9c6b2a/packages/taggers/averaged_perceptron_tagger_eng.zip",
+      "bytes": 1539115,
+      "sha256": "6025f530624335c67d6547d44757b357b4e79bae030a0383e9887a92c1718f0b"
+    }
+  ]
+}
+Collecting annotated-doc==0.0.5 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 1))
+  Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting annotated-types==0.8.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 2))
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting anyio==4.15.1 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 3))
+  Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting click==8.5.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 4))
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting cloudpickle==3.1.2 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 5))
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting defusedxml==0.7.1 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 6))
+  Downloading defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Collecting fastapi==0.141.1 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 7))
+  Downloading fastapi-0.141.1-py3-none-any.whl.metadata (27 kB)
+Collecting h11==0.16.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 8))
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting idna==3.19 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 9))
+  Downloading idna-3.19-py3-none-any.whl.metadata (9.2 kB)
+Collecting joblib==1.6.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 10))
+  Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting nltk==3.10.3 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 11))
+  Downloading nltk-3.10.3-py3-none-any.whl.metadata (3.2 kB)
+Collecting pydantic==2.13.5 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 12))
+  Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+Collecting pydantic_core==2.46.5 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 13))
+  Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting regex==2026.9.3 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 14))
+  Downloading regex-2026.9.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting starlette==1.6.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 15))
+  Downloading starlette-1.6.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting tqdm==4.70.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 16))
+  Downloading tqdm-4.70.0-py3-none-any.whl.metadata (57 kB)
+Collecting typing-inspection==0.4.4 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 17))
+  Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting typing_extensions==4.16.0 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 18))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting uvicorn==0.52.4 (from -r /Users/molly/Documents/Codex/2026-09-08/readme-md-docs-backend-bash-backend/work/project/backend/tools/deployment_probe/requirements.lock (line 19))
+  Downloading uvicorn-0.52.4-py3-none-any.whl.metadata (6.6 kB)
+Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+Downloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Downloading fastapi-0.141.1-py3-none-any.whl (131 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading idna-3.19-py3-none-any.whl (68 kB)
+Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+Downloading nltk-3.10.3-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 2.8 MB/s eta 0:00:00
+Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 1.4 MB/s eta 0:00:00
+Downloading regex-2026.9.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 802.0/802.0 kB 1.7 MB/s eta 0:00:00
+Downloading starlette-1.6.0-py3-none-any.whl (75 kB)
+Downloading tqdm-4.70.0-py3-none-any.whl (80 kB)
+Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading uvicorn-0.52.4-py3-none-any.whl (79 kB)
+Installing collected packages: typing_extensions, tqdm, regex, idna, h11, defusedxml, cloudpickle, click, annotated-types, annotated-doc, uvicorn, typing-inspection, pydantic_core, joblib, anyio, starlette, pydantic, nltk, fastapi
+Successfully installed annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 click-8.5.0 cloudpickle-3.1.2 defusedxml-0.7.1 fastapi-0.141.1 h11-0.16.0 idna-3.19 joblib-1.6.0 nltk-3.10.3 pydantic-2.13.5 pydantic_core-2.46.5 regex-2026.9.3 starlette-1.6.0 tqdm-4.70.0 typing-inspection-0.4.4 typing_extensions-4.16.0 uvicorn-0.52.4
+{
+  "scope": "cross_platform_pip_install_on_mac_NOT_Linux_execution",
+  "target": "CPython 3.12 / Debian 11-compatible manylinux x86_64 wheels",
+  "dependencies_bytes": 20856102,
+  "wordnet_extracted_bytes": 36353991,
+  "tagger_extracted_bytes": 5703817,
+  "probe_payload_bytes": 62917699,
+  "probe_zip_bytes": 18401202,
+  "probe_zip_sha256": "14b15b721e28b63a109d507b854ff142159b1c375dc11919db1c2044c2c3e6f9",
+  "cloud_cold_start_ms": null,
+  "excludes": [
+    "lexicon.db",
+    "business APIs",
+    "model SDK",
+    "Python interpreter supplied by platform",
+    "test dependencies"
+  ]
+}

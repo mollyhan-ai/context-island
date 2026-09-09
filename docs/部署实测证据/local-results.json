@@ -1,0 +1,550 @@
+{
+  "scope": "local_process_restart_OS_cache_not_cleared",
+  "platform_cold_start_ms": null,
+  "sample_count": 10,
+  "summary": {
+    "nltk_import_ms": {
+      "min": 58.281583013013005,
+      "median": 59.32741650030948,
+      "p95_nearest_rank": 290.42645799927413,
+      "max": 290.42645799927413
+    },
+    "wordnet_first_load_ms": {
+      "min": 751.2948339863215,
+      "median": 760.0371249864111,
+      "p95_nearest_rank": 779.4231250009034,
+      "max": 779.4231250009034
+    },
+    "tagger_first_load_ms": {
+      "min": 29.346958006499335,
+      "median": 29.963062494061887,
+      "p95_nearest_rank": 35.06533399922773,
+      "max": 35.06533399922773
+    },
+    "first_nlp_operation_ms": {
+      "min": 0.6820419803261757,
+      "median": 0.7343545003095642,
+      "p95_nearest_rank": 1.9123330130241811,
+      "max": 1.9123330130241811
+    },
+    "local_process_to_first_response_ms": {
+      "min": 1002.9987079906277,
+      "median": 1022.0087079942459,
+      "p95_nearest_rank": 1756.3852909952402,
+      "max": 1756.3852909952402
+    },
+    "max_rss_bytes": {
+      "min": 257409024,
+      "median": 257998848.0,
+      "p95_nearest_rank": 258179072,
+      "max": 258179072
+    }
+  },
+  "without_wordnet": {
+    "wordnet_removed": true,
+    "result": "LookupError",
+    "lemmatizer_works": false
+  },
+  "samples": [
+    {
+      "boot_id": "725b84b5-f034-42c6-af00-60b31ff47758",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 290.42645799927413,
+      "wordnet_first_load_ms": 767.7622080082074,
+      "tagger_first_load_ms": 35.06533399922773,
+      "first_nlp_operation_ms": 1.9123330130241811,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 257966080,
+      "module_entry_to_ready_ms": 1692.838709,
+      "local_process_to_first_response_ms": 1756.3852909952402,
+      "sample": 1
+    },
+    {
+      "boot_id": "b9e4dd46-6413-4c83-8d0f-8fb18d2c2317",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.39737500739284,
+      "wordnet_first_load_ms": 759.6607079904061,
+      "tagger_first_load_ms": 29.908083990449086,
+      "first_nlp_operation_ms": 0.6961659819353372,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 257802240,
+      "module_entry_to_ready_ms": 937.69575,
+      "local_process_to_first_response_ms": 1011.3009579945356,
+      "sample": 2
+    },
+    {
+      "boot_id": "51af9d04-292c-4d7b-b97b-8000f83b8d80",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 63.28420797945,
+      "wordnet_first_load_ms": 756.7164169740863,
+      "tagger_first_load_ms": 29.777124989777803,
+      "first_nlp_operation_ms": 0.8720000041648746,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 258179072,
+      "module_entry_to_ready_ms": 939.633459,
+      "local_process_to_first_response_ms": 1020.842249999987,
+      "sample": 3
+    },
+    {
+      "boot_id": "d74980b8-90ee-4bcb-b9fc-aa653e3057e8",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.01945798541419,
+      "wordnet_first_load_ms": 760.4135419824161,
+      "tagger_first_load_ms": 30.280500010121614,
+      "first_nlp_operation_ms": 0.6972090050112456,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 257409024,
+      "module_entry_to_ready_ms": 939.65225,
+      "local_process_to_first_response_ms": 1023.1751659885049,
+      "sample": 4
+    },
+    {
+      "boot_id": "9027b916-2833-4a8f-882a-1b8556d52bad",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 58.281583013013005,
+      "wordnet_first_load_ms": 779.2649579932913,
+      "tagger_first_load_ms": 30.048832995817065,
+      "first_nlp_operation_ms": 0.9176660096272826,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 258162688,
+      "module_entry_to_ready_ms": 955.687166,
+      "local_process_to_first_response_ms": 1027.7902920206543,
+      "sample": 5
+    },
+    {
+      "boot_id": "5d183e44-0ddc-4776-a35a-b03f2692ef3f",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.257457993226126,
+      "wordnet_first_load_ms": 779.4231250009034,
+      "tagger_first_load_ms": 29.952749988297,
+      "first_nlp_operation_ms": 0.7970000151544809,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 258048000,
+      "module_entry_to_ready_ms": 957.889042,
+      "local_process_to_first_response_ms": 1029.2654169898015,
+      "sample": 6
+    },
+    {
+      "boot_id": "ea0af220-89c0-4d3f-b21a-e89215cf7c01",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.15137499687262,
+      "wordnet_first_load_ms": 756.4192499849014,
+      "tagger_first_load_ms": 30.775624996749684,
+      "first_nlp_operation_ms": 0.7714999956078827,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 257523712,
+      "module_entry_to_ready_ms": 936.341833,
+      "local_process_to_first_response_ms": 1014.1320829861797,
+      "sample": 7
+    },
+    {
+      "boot_id": "2bdaf617-e461-401d-86b1-fcb8fda935cb",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.12862499826588,
+      "wordnet_first_load_ms": 751.2948339863215,
+      "tagger_first_load_ms": 29.346958006499335,
+      "first_nlp_operation_ms": 0.6826659955549985,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 258031616,
+      "module_entry_to_ready_ms": 929.383333,
+      "local_process_to_first_response_ms": 1002.9987079906277,
+      "sample": 8
+    },
+    {
+      "boot_id": "fdac67b9-6faa-4cad-af48-1b6cf10cf71d",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.4048329803627,
+      "wordnet_first_load_ms": 765.0034579855856,
+      "tagger_first_load_ms": 29.973374999826774,
+      "first_nlp_operation_ms": 0.6820419803261757,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 258064384,
+      "module_entry_to_ready_ms": 943.691291,
+      "local_process_to_first_response_ms": 1027.5645830261055,
+      "sample": 9
+    },
+    {
+      "boot_id": "c23752d7-6e25-4b0d-9fb6-24d6be54123d",
+      "scope": "process_only_not_platform_cold_start",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "machine": "arm64",
+      "python": "3.12.14",
+      "versions": {
+        "nltk": "3.10.3",
+        "fastapi": "0.141.1",
+        "uvicorn": "0.52.4",
+        "pydantic": "2.13.5"
+      },
+      "nltk_import_ms": 59.449791006045416,
+      "wordnet_first_load_ms": 757.6718750060536,
+      "tagger_first_load_ms": 29.93145800428465,
+      "first_nlp_operation_ms": 0.692083005560562,
+      "wordnet_version": "3.0",
+      "tags": [
+        [
+          "The",
+          "DT"
+        ],
+        [
+          "banks",
+          "NNS"
+        ],
+        [
+          "approved",
+          "VBD"
+        ],
+        [
+          "the",
+          "DT"
+        ],
+        [
+          "loans",
+          "NNS"
+        ],
+        [
+          ".",
+          "."
+        ]
+      ],
+      "lemma": "bank",
+      "bank_senses": 18,
+      "max_rss_bytes": 257523712,
+      "module_entry_to_ready_ms": 938.060542,
+      "local_process_to_first_response_ms": 1019.5330840069801,
+      "sample": 10
+    }
+  ]
+}
