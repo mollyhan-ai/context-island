@@ -204,6 +204,11 @@
 
   /* ---------- 领域常见词 ---------- */
 
+  #lexTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .lex-refresh{flex:0 0 auto;min-height:44px;padding:4px 0 4px 8px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:400;cursor:pointer;white-space:nowrap}
+  .lex-refresh:hover{color:var(--s)}
+  .lex-refresh:focus-visible{outline:2px solid var(--s);outline-offset:2px;border-radius:3px}
+
   .lex{
     display:flex;
     flex-wrap:wrap;
@@ -591,10 +596,9 @@
   <button class="again" id="again" type="button" aria-describedby="askNote">再来一句</button>
 </section>
 
-<h2 id="lexTitle">产品经理常见的词</h2>
-<p class="sub" id="lexSub">点一个继续看。换右上角的领域，这里也会跟着换。</p>
+<h2 id="lexTitle"><span id="lexHeadingText">产品经理常见的词</span><button class="lex-refresh" id="lexRefresh" type="button" aria-controls="lex" aria-label="换一批产品经理常见词">换一批</button></h2>
 <div class="lex" id="lex"></div>
-<p class="ask-note" id="lexNote" role="status" aria-live="polite"></p>
+<p class="ask-note visually-hidden" id="lexNote" role="status" aria-live="polite"></p>
 
 <h2>换个词看看</h2>
 <p class="sub">八个词，八个领域。</p>
@@ -1015,12 +1019,12 @@
   var SPK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.7 4.4 4.6H1.9v6.8h2.5L8 14.3z" fill="currentColor" stroke="none"/><path d="M10.9 5.2a4 4 0 0 1 0 5.6M12.9 3.3a6.6 6.6 0 0 1 0 9.4" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>';
 
   var LEX = {
-    '产品经理':['iterate','scope','trade-off','retention','onboarding','churn','backlog','stakeholder','benchmark','rollout','friction','adoption'],
-    '心理学'  :['cognitive','trigger','salience','arousal','coping','rumination','priming','attachment','resilience','avoidance','recall','stimulus'],
-    '医学'    :['onset','prognosis','lesion','adverse','dosage','remission','contraindication','biopsy','chronic','incidence','regimen','relapse'],
-    '金融'    :['yield','hedge','leverage','volatility','liquidity','allocation','valuation','dividend','maturity','spread','collateral','drawdown'],
-    '法律'    :['clause','liability','indemnity','breach','jurisdiction','waiver','precedent','statutory','testimony','injunction','tort','covenant'],
-    '工程'    :['tolerance','fatigue','load','corrosion','yield','calibration','redundancy','throughput','stress','alloy','clearance','failure']
+    '产品经理':['iterate','scope','trade-off','retention','orientation','churn','backlog','stakeholder','benchmark','deployment','friction','adoption','strategy','prototype','feedback','milestone','workflow','feature','requirement','priority','metric','conversion','experiment','hypothesis','insight','usability','validation','discovery','sprint','release','launch','engagement','segmentation','objective','alignment','iteration'],
+    '心理学'  :['cognitive','trigger','salience','arousal','coping','rumination','priming','attachment','resilience','avoidance','recall','stimulus','perception','attention','memory','emotion','motivation','behavior','conditioning','reinforcement','bias','cognition','awareness','empathy','stress','anxiety','depression','inhibition','recognition','learning','adaptation','personality','temperament','intuition','reasoning','habituation'],
+    '医学'    :['onset','prognosis','lesion','adverse','dosage','remission','contraindication','biopsy','chronic','incidence','regimen','relapse','diagnosis','symptom','treatment','therapy','infection','inflammation','immunity','antibody','vaccine','screening','prevention','recovery','trauma','syndrome','acute','benign','malignant','pathogen','metabolism','outpatient','rehabilitation','analgesic','surgical','clinical'],
+    '金融'    :['yield','hedge','leverage','volatility','liquidity','allocation','valuation','dividend','maturity','spread','collateral','depreciation','asset','equity','bond','portfolio','capital','revenue','profit','margin','debt','credit','interest','investment','cash','inflation','deflation','arbitrage','option','future','swap','premium','risk','return','turnover','solvency'],
+    '法律'    :['clause','liability','indemnity','breach','jurisdiction','waiver','precedent','statutory','testimony','injunction','tort','covenant','contract','consent','evidence','verdict','appeal','plaintiff','defendant','counsel','litigation','arbitration','settlement','enforcement','compliance','obligation','negligence','damages','remedy','statute','regulation','witness','custody','probate','affidavit','subpoena'],
+    '工程'    :['tolerance','fatigue','load','corrosion','yield','calibration','redundancy','throughput','stress','alloy','clearance','failure','torque','strain','pressure','friction','viscosity','density','velocity','acceleration','efficiency','conductivity','insulation','vibration','resonance','oscillation','compression','tension','shear','tensile','thermal','hydraulic','pneumatic','turbine','bearing','actuator']
   };
   var WORD_RECORDINGS = {
   "exposure": [
@@ -1142,6 +1146,8 @@
   var rBtn = document.getElementById('realmBtn');
   var rMenu = document.getElementById('realmMenu');
   var lexBox = document.getElementById('lex');
+  var lexRefresh = document.getElementById('lexRefresh');
+  var lexBatchByRealm = {}, lexBatchSize = 12;
   var viewState = 'idle';
   var lastResult = null;
   var requestSeq = 0, activeRequest = null;
@@ -1560,12 +1566,21 @@
     }else requestCard({word:lastResult.query,reason:'again'});
   });
 
-  function renderLex(){
+  function renderLex(nextBatch){
     var realm = REALMS[realmIdx].key;
-    document.getElementById('lexTitle').textContent = realm+'常见的词';
-    lexBox.innerHTML = LEX[realm].map(function(w){return '<button type="button" data-w="'+esc(w)+'">'+esc(w)+'</button>';}).join('');
-    document.getElementById('lexNote').textContent = '';
+    var words = LEX[realm], batchCount = Math.ceil(words.length / lexBatchSize);
+    var batch = lexBatchByRealm[realm] || 0;
+    if(nextBatch)batch = (batch + 1) % batchCount;
+    lexBatchByRealm[realm] = batch;
+    document.getElementById('lexHeadingText').textContent = realm+'常见的词';
+    lexRefresh.setAttribute('aria-label','换一批'+realm+'常见词');
+    lexBox.innerHTML = words.slice(batch * lexBatchSize, (batch + 1) * lexBatchSize).map(function(w){
+      var seen = lastResult && lastResult.realm === realm && lastResult.query === w;
+      return '<button type="button" data-w="'+esc(w)+'"'+(seen?' class="seen"':'')+'>'+esc(w)+'</button>';
+    }).join('');
+    document.getElementById('lexNote').textContent = nextBatch ? '已换为'+realm+'常见词，第'+(batch+1)+'批。' : '';
   }
+  lexRefresh.addEventListener('click',function(){renderLex(true);});
   lexBox.addEventListener('click',function(e){
     var b=e.target.closest('button[data-w]'); if(!b) return;
     input.value=b.dataset.w;requestCard({word:b.dataset.w,reason:'search'});
